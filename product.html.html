@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product | Kraftloom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- (Include Header, Toast, Cart) -->
+  
+  <main class="container">
+    <div id="breadcrumb" style="margin-bottom: 2rem; font-size: 0.9rem; color: #666;"></div>
+    
+    <div class="product-single">
+      <!-- Image Gallery -->
+      <div>
+        <img id="main-img" class="gallery-main skeleton" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading">
+      </div>
+      
+      <!-- Details -->
+      <div class="product-info">
+        <span id="p-status" class="stock-status skeleton" style="min-width: 80px;"></span>
+        <h1 id="p-name" class="skeleton" style="min-height: 40px; margin-bottom:1rem;"></h1>
+        <h2 id="p-price" class="price skeleton" style="font-size: 1.5rem; min-height: 30px;"></h2>
+        <p id="p-desc" class="skeleton" style="margin: 1.5rem 0; min-height: 100px;"></p>
+        
+        <div class="order-actions">
+          <button id="btn-cart" class="btn btn-outline">Add to Cart</button>
+          <button id="btn-wa" class="btn btn-primary" style="background:#25D366; color:white;">Order on WhatsApp</button>
+          <button id="btn-ig" class="btn btn-primary" style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">Order on Instagram</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- (Include Footer) -->
+  <script src="app.js" defer></script>
+</body>
+</html>

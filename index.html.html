@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kraftloom | Handmade. Custom. Made with Love.</title>
+  <meta name="description" content="Small Things, Big Happiness. Handmade gifts, crochet, kids wear, and custom accessories in HSR Layout, Bengaluru.">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Kraftloom",
+      "image": "https://kraftloom.com/assets/logo.png",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "27th Main Rd, nearby HSR Ceramics, 1st Sector, HSR Layout",
+        "addressLocality": "Bengaluru",
+        "addressRegion": "Karnataka",
+        "postalCode": "560102",
+        "addressCountry": "IN"
+      },
+      "url": "https://kraftloom.com"
+    }
+  </script>
+</head>
+<body>
+  <!-- Global Toast -->
+  <div id="global-toast" class="toast"></div>
+  
+  <!-- Cart overlay/drawer -->
+  <div class="overlay" id="overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="close-cart" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+    </div>
+    <div class="cart-items" id="cart-items-container"></div>
+    <div class="cart-footer">
+      <h3 id="cart-total" style="margin-bottom:1rem;">Total: ₹0</h3>
+      <button class="btn btn-primary" id="checkout-wa" style="width:100%;">Order via WhatsApp</button>
+    </div>
+  </div>
+
+  <header>
+    <a href="index.html" class="logo">
+      <img src="assets/logo.png" alt="Kraftloom Logo">
+      Kraftloom
+    </a>
+    <button class="hamburger">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop All</a>
+      <a href="custom-order.html">Custom Orders</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button id="cart-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;position:relative;">
+        🛒 <span id="cart-count" style="position:absolute;top:-10px;right:-10px;background:var(--rose);color:white;border-radius:50%;width:20px;height:20px;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="accent-text">Small Things, Big Happiness</p>
+      <h1>Handmade. Custom.<br>Made with Love.</h1>
+      <p style="margin-bottom: 2rem;">Let's Celebrate New Beginnings Together.</p>
+      <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="shop.html" class="btn btn-primary">Shop Now</a>
+        <a href="custom-order.html" class="btn btn-outline">Request Custom Order</a>
+      </div>
+    </section>
+
+    <section class="container">
+      <h2 style="text-align:center; margin-bottom: 2rem;">Shop by Category</h2>
+      <div class="grid grid-4" style="text-align:center;">
+        <a href="shop.html?category=Crochet" class="product-card" style="background:var(--blush);"><h3>Crochet</h3></a>
+        <a href="shop.html?category=Gifts" class="product-card" style="background:var(--blush);"><h3>Gift Hampers</h3></a>
+        <a href="shop.html?category=Womens Accessories" class="product-card" style="background:var(--blush);"><h3>Accessories</h3></a>
+        <a href="shop.html?category=Kids Wear" class="product-card" style="background:var(--blush);"><h3>Kids Wear</h3></a>
+      </div>
+    </section>
+
+    <section class="container">
+      <h2 style="text-align:center; margin-bottom: 2rem;">Featured Products</h2>
+      <div class="grid grid-4" id="featured-products">
+        <!-- Skeleton Loaders -->
+        <div class="skeleton" style="height:350px;"></div>
+        <div class="skeleton" style="height:350px;"></div>
+        <div class="skeleton" style="height:350px;"></div>
+        <div class="skeleton" style="height:350px;"></div>
+      </div>
+    </section>
+
+    <section style="background:var(--white); padding: 4rem 5%; text-align:center;">
+      <h2 style="margin-bottom: 2rem;">Why Kraftloom?</h2>
+      <div class="container grid grid-3">
+        <div>
+          <h3 class="accent-text">Handmade</h3>
+          <p>Every piece is crafted by hand, ensuring unique quality and attention to detail.</p>
+        </div>
+        <div>
+          <h3 class="accent-text">Custom</h3>
+          <p>We bring your vision to life with personalised designs tailored just for you.</p>
+        </div>
+        <div>
+          <h3 class="accent-text">Made with Love</h3>
+          <p>Crafted in Bengaluru with passion, care, and the finest materials.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <a href="https://wa.me/919876543210" class="floating-wa" target="_blank" aria-label="Chat on WhatsApp">💬</a>
+
+  <footer>
+    <div class="logo" style="justify-content:center; margin-bottom:1rem;">
+      <img src="assets/logo.png" alt="Kraftloom">
+    </div>
+    <p>27th Main Rd, nearby HSR Ceramics, 1st Sector, HSR Layout, Bengaluru 560102</p>
+    <div class="footer-links">
+      <a href="shop.html">Shop</a>
+      <a href="about.html">About</a>
+      <a href="policies.html">Policies</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Kraftloom. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

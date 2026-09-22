@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us | Kraftloom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <a href="index.html" class="logo"><img src="assets/logo.png" alt="Kraftloom Logo">Kraftloom</a>
+    <button class="hamburger">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop All</a>
+      <a href="custom-order.html">Custom Orders</a>
+      <a href="about.html" style="color:var(--rose); font-weight:700;">About Us</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button id="cart-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;position:relative;">
+        🛒 <span id="cart-count" style="position:absolute;top:-10px;right:-10px;background:var(--rose);color:white;border-radius:50%;width:20px;height:20px;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header"><h3>Your Cart</h3><button id="close-cart" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button></div>
+    <div class="cart-items" id="cart-items-container"></div>
+    <div class="cart-footer"><h3 id="cart-total" style="margin-bottom:1rem;">Total: ₹0</h3><button class="btn btn-primary" id="checkout-wa" style="width:100%;">Order via WhatsApp</button></div>
+  </div>
+
+  <main class="container" style="max-width: 800px;">
+    <h1 style="text-align:center; margin-bottom: 2rem;">Our Story</h1>
+    <div style="background: var(--white); padding: 3rem; border-radius: var(--radius); box-shadow: var(--shadow);">
+      <p class="accent-text" style="text-align:center; margin-bottom: 1rem;">Small Things, Big Happiness</p>
+      <p style="margin-bottom: 1.5rem;">Welcome to Kraftloom, a handmade-gifts boutique nestled in the heart of HSR Layout, Bengaluru. What started as a passion for crafting beautiful, personalized items has blossomed into a space dedicated to celebrating life's special moments.</p>
+      <p style="margin-bottom: 1.5rem;">We believe that the best gifts aren't just bought; they are made. From intricate crochet bouquets to carefully curated gift hampers and custom kids wear, every piece in our collection is crafted by hand, custom-tailored to your vision, and always made with love.</p>
+      <p style="margin-bottom: 2rem;">Whether you are looking for a unique birthday hamper, a custom t-shirt for a milestone event, or a delicate handmade accessory, we are here to help you bring your ideas to life. Let's celebrate new beginnings together.</p>
+      
+      <div style="text-align:center;">
+        <a href="shop.html" class="btn btn-primary">Explore the Shop</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="logo" style="justify-content:center; margin-bottom:1rem;"><img src="assets/logo.png" alt="Kraftloom"></div>
+    <p>27th Main Rd, nearby HSR Ceramics, 1st Sector, HSR Layout, Bengaluru 560102</p>
+    <div class="footer-links">
+      <a href="shop.html">Shop</a> <a href="about.html">About</a> <a href="policies.html">Policies</a> <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Kraftloom. All rights reserved.</p>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>

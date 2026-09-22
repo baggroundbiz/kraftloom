@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Store Policies | Kraftloom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <a href="index.html" class="logo"><img src="assets/logo.png" alt="Kraftloom Logo">Kraftloom</a>
+    <button class="hamburger">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop All</a>
+      <a href="custom-order.html">Custom Orders</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button id="cart-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;position:relative;">
+        🛒 <span id="cart-count" style="position:absolute;top:-10px;right:-10px;background:var(--rose);color:white;border-radius:50%;width:20px;height:20px;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header"><h3>Your Cart</h3><button id="close-cart" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button></div>
+    <div class="cart-items" id="cart-items-container"></div>
+    <div class="cart-footer"><h3 id="cart-total" style="margin-bottom:1rem;">Total: ₹0</h3><button class="btn btn-primary" id="checkout-wa" style="width:100%;">Order via WhatsApp</button></div>
+  </div>
+
+  <main class="container" style="max-width: 800px;">
+    <h1 style="text-align:center; margin-bottom: 3rem;">Store Policies</h1>
+    
+    <div style="background: var(--white); padding: 3rem; border-radius: var(--radius); box-shadow: var(--shadow);">
+      <h2 style="color: var(--brown); margin-bottom: 1rem; border-bottom: 2px solid var(--blush); padding-bottom: 0.5rem;">Shipping & Delivery</h2>
+      <p style="margin-bottom: 1rem;">We ship across India. Standard orders (in-stock items) are dispatched within 2-3 business days. Delivery within Bengaluru usually takes 1-2 days, while outstation orders may take 4-7 days depending on the pin code.</p>
+      <p style="margin-bottom: 2.5rem;">For express delivery within Bengaluru, please reach out to us on WhatsApp before placing your order to check local courier availability (Dunzo/Porter/Swiggy Genie).</p>
+
+      <h2 style="color: var(--brown); margin-bottom: 1rem; border-bottom: 2px solid var(--blush); padding-bottom: 0.5rem;">Custom Orders</h2>
+      <p style="margin-bottom: 1rem;">Custom orders are crafted specifically for you. Because of the handmade nature of these items, production timelines range from 5 to 15 days depending on complexity and current order volumes.</p>
+      <p style="margin-bottom: 2.5rem;">A 50% advance payment is required to confirm a custom order. Once work has begun, custom orders cannot be cancelled or modified.</p>
+
+      <h2 style="color: var(--brown); margin-bottom: 1rem; border-bottom: 2px solid var(--blush); padding-bottom: 0.5rem;">Returns & Refunds</h2>
+      <p style="margin-bottom: 1rem;">Due to the delicate and customized nature of our products, we do not accept returns or exchanges for change of mind.</p>
+      <p style="margin-bottom: 1rem;">If an item arrives damaged, please share an unboxing video with us on WhatsApp within 24 hours of delivery. We will review the issue and arrange a replacement or refund for genuine transit damages.</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="logo" style="justify-content:center; margin-bottom:1rem;"><img src="assets/logo.png" alt="Kraftloom"></div>
+    <p>27th Main Rd, nearby HSR Ceramics, 1st Sector, HSR Layout, Bengaluru 560102</p>
+    <div class="footer-links">
+      <a href="shop.html">Shop</a> <a href="about.html">About</a> <a href="policies.html">Policies</a> <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Kraftloom. All rights reserved.</p>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>
