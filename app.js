@@ -45,23 +45,20 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Data Fetching (Stale-while-revalidate)
+// Data Fetching
 async function fetchProducts(page) {
-  const cached = localStorage.getItem('kraftloom_products');
-  if (cached) {
-    products = JSON.parse(cached);
-    routePageLogic(page);
-    fetchDataSilently(page); 
-  } else {
-    await fetchDataSilently(page);
-  }
+  await fetchDataSilently(page);
 }
 
 async function fetchDataSilently(page) {
   try {
     const res = await fetch(CONFIG.SHEET_API_URL);
     const data = await res.json();
-    products = data.filter(p => p.Status === 'Active');
+    
+    products = data.filter(p =>
+      String(p.Status || '').trim().toLowerCase() === 'active'
+    );
+    
     localStorage.setItem('kraftloom_products', JSON.stringify(products));
     routePageLogic(page);
   } catch (err) {
@@ -86,44 +83,94 @@ function renderHome() {
 function renderShop() {
   const grid = document.getElementById('product-grid');
   if (!grid) return;
-  
-  // URL Params parsing
+
   const params = new URLSearchParams(window.location.search);
-  const category = params.get('category');
-  const sort = params.get('sort');
-  const query = params.get('q');
-  
+
+  const category = params.get('category') || '';
+  const sort = params.get('sort') || 'newest';
+  const query = params.get('q') || '';
+
   let filtered = [...products];
-  
-  if (category) filtered = filtered.filter(p => p.Category.toLowerCase() === category.toLowerCase());
-  if (query) filtered = filtered.filter(p => p.Name.toLowerCase().includes(query.toLowerCase()));
-  
-  if (sort === 'price-asc') filtered.sort((a, b) => a.Price - b.Price);
-  if (sort === 'price-desc') filtered.sort((a, b) => b.Price - a.Price);
-  if (sort === 'newest') filtered.sort((a, b) => new Date(b.DateAdded) - new Date(a.DateAdded));
+
+  // Category filter
+  if (category) {
+    filtered = filtered.filter(p =>
+      String(p.Category || '').trim().toLowerCase() ===
+      category.trim().toLowerCase()
+    );
+  }
+
+  // Search filter
+  if (query) {
+    filtered = filtered.filter(p =>
+      String(p.Name || '').toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
+  // Sort by price low to high
+  if (sort === 'price-asc') {
+    filtered.sort((a, b) =>
+      Number(a.SalePrice || a.Price || 0) -
+      Number(b.SalePrice || b.Price || 0)
+    );
+  }
+
+  // Sort by price high to low
+  if (sort === 'price-desc') {
+    filtered.sort((a, b) =>
+      Number(b.SalePrice || b.Price || 0) -
+      Number(a.SalePrice || a.Price || 0)
+    );
+  }
+
+  // Newest first
+  if (sort === 'newest') {
+    filtered.sort((a, b) =>
+      new Date(b.DateAdded || 0) -
+      new Date(a.DateAdded || 0)
+    );
+  }
 
   if (filtered.length === 0) {
-    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-      <h3>No products found</h3>
-      <p>Try adjusting your filters or search term.</p>
-    </div>`;
-  } else {
-    grid.innerHTML = filtered.map(p => createProductCard(p)).join('');
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:3rem;">
+        <h3>No products found</h3>
+        <p>Try adjusting your filters or search term.</p>
+      </div>
+    `;
+    return;
   }
+
+  grid.innerHTML = filtered
+    .map(p => createProductCard(p))
+    .join('');
 }
 
 function createProductCard(p) {
-  const priceDisplay = p.SalePrice 
-    ? `<span class="strike">₹${p.Price}</span> ₹${p.SalePrice}` 
-    : `₹${p.Price}`;
-  const badge = p.SalePrice ? `<span class="badge">SALE</span>` : '';
+  const price = Number(p.Price || 0);
+  const salePrice = Number(p.SalePrice || 0);
+
+  const priceDisplay = salePrice
+    ? `<span class="strike">₹${price}</span> ₹${salePrice}`
+    : `₹${price}`;
+
+  const badge = salePrice
+    ? `<span class="badge">SALE</span>`
+    : '';
+
   const imgUrl = formatImageUrl(p.Image1);
 
   return `
-    <a href="product.html?slug=${p.Slug}" class="product-card">
+    <a href="product.html?slug=${encodeURIComponent(p.Slug || '')}" class="product-card">
       ${badge}
-      <img src="${imgUrl}" alt="${p.Name}" loading="lazy">
-      <h3>${p.Name}</h3>
+      <img
+        src="${imgUrl}"
+        alt="${p.Name || 'Kraftloom product'}"
+        loading="lazy"
+        width="600"
+        height="600"
+      >
+      <h3>${p.Name || 'Product'}</h3>
       <p class="price">${priceDisplay}</p>
     </a>
   `;
@@ -131,10 +178,12 @@ function createProductCard(p) {
 
 function formatImageUrl(url) {
   if (!url) return 'assets/logo.png';
+
   if (url.includes('drive.google.com/file/d/')) {
     const id = url.split('/d/')[1].split('/')[0];
-    return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+    return `https://drive.google.com/thumbnail?id=${id}&sz=w600`;
   }
+
   return url;
 }
 
