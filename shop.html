@@ -7,7 +7,43 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- (Include identical header, toast, cart, and floating WA button here) -->
+  
+  <!-- Global Toast -->
+  <div id="global-toast" class="toast"></div>
+  
+  <!-- Cart overlay/drawer -->
+  <div class="overlay" id="overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="close-cart" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+    </div>
+    <div class="cart-items" id="cart-items-container"></div>
+    <div class="cart-footer">
+      <h3 id="cart-total" style="margin-bottom:1rem;">Total: ₹0</h3>
+      <button class="btn btn-primary" id="checkout-wa" style="width:100%;">Order via WhatsApp</button>
+    </div>
+  </div>
+
+  <header>
+    <a href="index.html" class="logo">
+      <img src="assets/logo.png" alt="Kraftloom Logo">
+      Kraftloom
+    </a>
+    <button class="hamburger">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop All</a>
+      <a href="custom-order.html">Custom Orders</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button id="cart-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;position:relative;">
+        🛒 <span id="cart-count" style="position:absolute;top:-10px;right:-10px;background:var(--rose);color:white;border-radius:50%;width:20px;height:20px;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">0</span>
+      </button>
+    </div>
+  </header>
   
   <main class="container">
     <h1>Shop Collection</h1>
@@ -53,7 +89,22 @@
     </div>
   </main>
   
-  <!-- (Include Footer here) -->
+  <a href="https://wa.me/919876543210" class="floating-wa" target="_blank" aria-label="Chat on WhatsApp">💬</a>
+
+  <footer>
+    <div class="logo" style="justify-content:center; margin-bottom:1rem;">
+      <img src="assets/logo.png" alt="Kraftloom">
+    </div>
+    <p>27th Main Rd, nearby HSR Ceramics, 1st Sector, HSR Layout, Bengaluru 560102</p>
+    <div class="footer-links">
+      <a href="shop.html">Shop</a>
+      <a href="about.html">About</a>
+      <a href="policies.html">Policies</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Kraftloom. All rights reserved.</p>
+  </footer>
+
   <script src="app.js" defer></script>
 </body>
 </html>
