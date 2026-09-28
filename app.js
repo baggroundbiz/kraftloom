@@ -14,8 +14,9 @@ let cart = JSON.parse(localStorage.getItem('kraftloom_cart')) || [];
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
   initCart();
-  initFilters(); // Added for instant filtering
+  initFilters();
   updateCartCount();
+  injectModal(); // Preload the modal HTML into the DOM
   
   let page = window.location.pathname.split('/').pop().replace('.html', '');
   if (!page || page === '') page = 'index'; 
@@ -47,9 +48,19 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Data Fetching
+// Data Fetching (Stale-While-Revalidate for Instant Loading)
 async function fetchProducts(page) {
-  await fetchDataSilently(page);
+  const cached = localStorage.getItem('kraftloom_products');
+  if (cached) {
+    try {
+      products = JSON.parse(cached);
+      if (products.length > 0) routePageLogic(page);
+    } catch (e) {
+      console.error("Cache read error", e);
+    }
+  }
+  // Fetch fresh data in the background
+  fetchDataSilently(page);
 }
 
 async function fetchDataSilently(page) {
@@ -62,7 +73,6 @@ async function fetchDataSilently(page) {
     }
     
     if (!Array.isArray(data)) {
-      console.error("Expected an array of products, got:", typeof data);
       data = [];
     }
 
@@ -77,7 +87,7 @@ async function fetchDataSilently(page) {
     });
     
     localStorage.setItem('kraftloom_products', JSON.stringify(products));
-    routePageLogic(page);
+    routePageLogic(page); // Re-render with fresh data
   } catch (err) {
     console.error("Failed to load products", err);
   }
@@ -86,7 +96,7 @@ async function fetchDataSilently(page) {
 function routePageLogic(page) {
   if (page === 'index') renderHome();
   if (page === 'shop') renderShop();
-  if (page === 'product') renderProductPage();
+  if (page === 'product') renderProductPage(); // Kept as fallback for old direct links
 }
 
 // Instant Filter Initialization
@@ -95,9 +105,8 @@ function initFilters() {
   const catRadios = document.querySelectorAll('input[name="category"]');
   const sortRadios = document.querySelectorAll('input[name="sort"]');
 
-  if (!qInput && catRadios.length === 0) return; // Not on shop page
+  if (!qInput && catRadios.length === 0) return;
 
-  // Sync UI with URL params on initial load
   const params = new URLSearchParams(window.location.search);
   if (qInput && params.get('q')) qInput.value = params.get('q');
   
@@ -111,7 +120,6 @@ function initFilters() {
     sortRadios.forEach(r => { if (r.value === sortParam) r.checked = true; });
   }
 
-  // Update logic on change
   const updateShop = () => {
     const newParams = new URLSearchParams();
     if (qInput.value) newParams.set('q', qInput.value);
@@ -123,9 +131,9 @@ function initFilters() {
     if (activeSort && activeSort.value) newParams.set('sort', activeSort.value);
     
     const newUrl = `${window.location.pathname}?${newParams.toString()}`;
-    window.history.replaceState({}, '', newUrl); // Updates URL without reloading
+    window.history.replaceState({}, '', newUrl);
     
-    renderShop(); // Instantly update grid
+    renderShop();
   };
 
   if (qInput) {
@@ -144,9 +152,7 @@ function renderHome() {
   if (!featuredContainer) return;
   
   let featured = products.filter(p => String(p.Featured).toUpperCase() === "TRUE" || p.Featured === true).slice(0, 4);
-  if (featured.length === 0) {
-    featured = products.slice(0, 4);
-  }
+  if (featured.length === 0) featured = products.slice(0, 4);
   
   featuredContainer.innerHTML = featured.map(p => createProductCard(p)).join('');
 }
@@ -162,31 +168,27 @@ function renderShop() {
 
   let filtered = [...products];
 
-  // Category filter
+  // Fuzzy Category filter to avoid matching errors
   if (category) {
-    filtered = filtered.filter(p =>
-      String(p.Category || '').trim().toLowerCase() === category.trim().toLowerCase()
-    );
+    const searchCat = category.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    filtered = filtered.filter(p => {
+      const pCat = String(p.Category || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+      return pCat === searchCat || pCat.includes(searchCat) || searchCat.includes(pCat);
+    });
   }
 
-  // Search filter
   if (query) {
     filtered = filtered.filter(p =>
       String(p.Name || '').toLowerCase().includes(query.toLowerCase())
     );
   }
 
-  // Sort by price low to high
   if (sort === 'price-asc') {
     filtered.sort((a, b) => Number(a.SalePrice || a.Price || 0) - Number(b.SalePrice || b.Price || 0));
   }
-
-  // Sort by price high to low
   if (sort === 'price-desc') {
     filtered.sort((a, b) => Number(b.SalePrice || b.Price || 0) - Number(a.SalePrice || a.Price || 0));
   }
-
-  // Newest first
   if (sort === 'newest') {
     filtered.sort((a, b) => new Date(b.DateAdded || 0) - new Date(a.DateAdded || 0));
   }
@@ -194,7 +196,7 @@ function renderShop() {
   if (filtered.length === 0) {
     grid.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:3rem;">
-        <h3>No products found</h3>
+        <h3 style="font-family:'Playfair Display', serif; font-size:1.5rem; color:var(--brown);">No products found</h3>
         <p>Try adjusting your filters or search term.</p>
       </div>
     `;
@@ -215,19 +217,14 @@ function createProductCard(p) {
   const badge = salePrice ? `<span class="badge">SALE</span>` : '';
   const imgUrl = formatImageUrl(p.Image1);
 
+  // Now triggers openModal instead of navigating
   return `
-    <a href="product.html?slug=${encodeURIComponent(p.Slug || '')}" class="product-card">
+    <div class="product-card" style="cursor:pointer;" onclick="openModal('${encodeURIComponent(p.Slug || '')}')">
       ${badge}
-      <img
-        src="${imgUrl}"
-        alt="${p.Name || 'Kraftloom product'}"
-        loading="lazy"
-        width="600"
-        height="600"
-      >
+      <img src="${imgUrl}" alt="${p.Name || 'Kraftloom product'}" loading="lazy" width="600" height="600">
       <h3>${p.Name || 'Product'}</h3>
       <p class="price">${priceDisplay}</p>
-    </a>
+    </div>
   `;
 }
 
@@ -240,76 +237,86 @@ function formatImageUrl(url) {
   return url;
 }
 
+// Modal Implementation
+function injectModal() {
+  if (document.getElementById('product-modal')) return;
+  const modalHTML = `
+    <div id="product-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; padding:20px;">
+      <div id="product-modal-content" style="background:var(--white); border-radius:12px; max-width:900px; width:100%; max-height:90vh; overflow-y:auto; position:relative; padding:2rem; display:grid; gap:2rem;">
+        <button onclick="closeModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:2rem; cursor:pointer; color:var(--brown); line-height:1;">&times;</button>
+        <div style="display:flex; flex-wrap:wrap; gap:2rem;">
+          <div style="flex:1; min-width:300px;">
+            <img id="modal-img" style="width:100%; border-radius:12px; object-fit:cover; aspect-ratio:1/1;">
+          </div>
+          <div style="flex:1; min-width:300px; display:flex; flex-direction:column; justify-content:center;">
+            <span id="modal-status" style="display:inline-block; padding:4px 12px; background:#e0f2f1; color:#00695c; border-radius:20px; font-size:0.8rem; margin-bottom:1rem; width:fit-content;"></span>
+            <h2 id="modal-title" style="margin-bottom:0.5rem; font-family:'Playfair Display', serif; font-size:2.5rem; color:var(--brown);"></h2>
+            <p id="modal-price" style="font-weight:700; color:var(--rose); font-size:1.5rem; margin-bottom:1.5rem;"></p>
+            <p id="modal-desc" style="margin-bottom:2rem; font-size:1rem; color:var(--brown); line-height:1.6;"></p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+               <button id="modal-btn-cart" class="btn btn-outline" style="width:100%;">Add to Cart</button>
+               <button id="modal-btn-wa" class="btn btn-primary" style="background:#25D366; width:100%; color:white; border:none;">Order on WhatsApp</button>
+               <button id="modal-btn-ig" class="btn btn-primary" style="background:linear-gradient(45deg, #f09433 0%, #bc1888 100%); width:100%; color:white; border:none;">Order on Instagram</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  // Close on outside click
+  document.getElementById('product-modal').addEventListener('click', (e) => {
+    if(e.target.id === 'product-modal') closeModal();
+  });
+}
+
+window.openModal = function(encodedSlug) {
+  const slug = decodeURIComponent(encodedSlug);
+  const product = products.find(p => String(p.Slug).toLowerCase() === slug.toLowerCase());
+  if(!product) return;
+  
+  document.getElementById('modal-title').textContent = product.Name || 'Product';
+  document.getElementById('modal-desc').textContent = product.Description || '';
+  
+  const price = Number(product.Price || 0);
+  const salePrice = Number(product.SalePrice || 0);
+  document.getElementById('modal-price').innerHTML = salePrice ? `<span class="strike">₹${price}</span> ₹${salePrice}` : `₹${price}`;
+  
+  document.getElementById('modal-status').textContent = product.Availability || 'Available';
+  document.getElementById('modal-img').src = formatImageUrl(product.Image1);
+  
+  document.getElementById('modal-btn-wa').onclick = () => orderViaWhatsApp(product);
+  document.getElementById('modal-btn-ig').onclick = () => orderViaInstagram(product);
+  document.getElementById('modal-btn-cart').onclick = () => { addToCart(product); closeModal(); };
+  
+  const modal = document.getElementById('product-modal');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden'; 
+}
+
+window.closeModal = function() {
+  const modal = document.getElementById('product-modal');
+  if(modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = ''; 
+  }
+}
+
+// Fallback for direct links
 function renderProductPage() {
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
-  
-  const product = products.find(p => 
-    String(p.Slug || '').trim().toLowerCase() === String(slug || '').trim().toLowerCase()
-  );
-  
-  if (!product) {
-    const infoDiv = document.querySelector('.product-info');
-    if (infoDiv) {
-      infoDiv.innerHTML = `<h2>Product not found</h2><p>We couldn't find "${slug}".</p><br><a href="shop.html" class="btn btn-primary">Back to Shop</a>`;
-    }
-    return;
+  if (slug) {
+    // If they hit product.html, just redirect them to shop and open modal
+    window.location.href = `shop.html?q=${slug}`;
   }
-
-  document.title = `${product.Name || 'Product'} | Kraftloom`;
-  
-  const elName = document.getElementById('p-name');
-  if (elName) {
-    elName.textContent = product.Name || 'Kraftloom Product';
-    elName.classList.remove('skeleton'); // Clears the grey box!
-  }
-  
-  const elPrice = document.getElementById('p-price');
-  if (elPrice) {
-    const price = Number(product.Price || 0);
-    const salePrice = Number(product.SalePrice || 0);
-    elPrice.innerHTML = salePrice ? `<span class="strike">₹${price}</span> ₹${salePrice}` : `₹${price}`;
-    elPrice.classList.remove('skeleton');
-  }
-  
-  const elDesc = document.getElementById('p-desc');
-  if (elDesc) {
-    elDesc.textContent = product.Description || '';
-    elDesc.classList.remove('skeleton');
-  }
-  
-  const mainImg = document.getElementById('main-img');
-  if (mainImg) {
-    mainImg.src = formatImageUrl(product.Image1);
-    mainImg.classList.remove('skeleton');
-  }
-  
-  const elBreadcrumb = document.getElementById('breadcrumb');
-  if (elBreadcrumb) {
-    elBreadcrumb.innerHTML = `<a href="index.html">Home</a> / <a href="shop.html?category=${encodeURIComponent(product.Category || '')}">${product.Category || 'Shop'}</a> / ${product.Name || ''}`;
-  }
-  
-  const elStatus = document.getElementById('p-status');
-  if (elStatus) {
-    elStatus.textContent = product.Availability || 'Available';
-    elStatus.classList.remove('skeleton');
-  }
-
-  // Order Handlers
-  const btnWa = document.getElementById('btn-wa');
-  if (btnWa) btnWa.onclick = () => orderViaWhatsApp(product);
-  
-  const btnIg = document.getElementById('btn-ig');
-  if (btnIg) btnIg.onclick = () => orderViaInstagram(product);
-  
-  const btnCart = document.getElementById('btn-cart');
-  if (btnCart) btnCart.onclick = () => addToCart(product);
 }
 
 // Ordering & Cart
 function buildMessage(product) {
   const price = product.SalePrice || product.Price;
-  return `Hi Kraftloom! I'd like to order:\n${product.Name}\nPrice: ₹${price}\nLink: ${CONFIG.SITE_URL}/product.html?slug=${product.Slug}`;
+  return `Hi Kraftloom! I'd like to order:\n${product.Name}\nPrice: ₹${price}`;
 }
 
 function orderViaWhatsApp(product) {
@@ -343,7 +350,10 @@ function initCart() {
   if(overlay) overlay.addEventListener('click', toggleCart);
 
   const checkoutWa = document.getElementById('checkout-wa');
-  if(checkoutWa) checkoutWa.addEventListener('click', sendCartWhatsApp);
+  if(checkoutWa) checkoutWa.addEventListener('click', () => sendCart('whatsapp'));
+  
+  const checkoutIg = document.getElementById('checkout-ig');
+  if(checkoutIg) checkoutIg.addEventListener('click', () => sendCart('instagram'));
 }
 
 function addToCart(product) {
@@ -358,6 +368,16 @@ function addToCart(product) {
   showToast(`${product.Name} added to cart!`);
 }
 
+window.updateQty = function(index, delta) {
+  if (cart[index]) {
+    cart[index].qty += delta;
+    if (cart[index].qty <= 0) cart.splice(index, 1);
+    localStorage.setItem('kraftloom_cart', JSON.stringify(cart));
+    updateCartCount();
+    renderCartItems();
+  }
+};
+
 function updateCartCount() {
   const countSpan = document.getElementById('cart-count');
   if(countSpan) countSpan.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -368,20 +388,25 @@ function renderCartItems() {
   if (!container) return;
   
   let total = 0;
-  
   if (cart.length === 0) {
-    container.innerHTML = '<p>Your cart is empty.</p>';
+    container.innerHTML = '<p style="text-align:center; margin-top:2rem;">Your cart is empty.</p>';
   } else {
     container.innerHTML = cart.map((item, index) => {
       const price = item.SalePrice || item.Price;
       total += price * item.qty;
       return `
-        <div class="cart-item">
-          <img src="${formatImageUrl(item.Image1)}" alt="${item.Name}">
-          <div>
-            <h4>${item.Name}</h4>
-            <p>₹${price} x ${item.qty}</p>
-            <button onclick="removeFromCart(${index})" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:0.8rem;margin-top:5px;">Remove</button>
+        <div class="cart-item" style="display:flex; gap:15px; margin-bottom:15px; background:var(--white); padding:10px; border-radius:8px; border:1px solid #f0e6d8;">
+          <img src="${formatImageUrl(item.Image1)}" alt="${item.Name}" style="width:70px; height:70px; object-fit:cover; border-radius:6px;">
+          <div style="flex:1;">
+            <h4 style="font-size:0.95rem; margin-bottom:4px; font-family:'Nunito', sans-serif;">${item.Name}</h4>
+            <p style="font-size:0.95rem; font-weight:700; color:var(--rose); margin-bottom:8px;">₹${price}</p>
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <div style="display:flex; align-items:center; border:1px solid var(--blush); border-radius:4px; overflow:hidden;">
+                <button onclick="updateQty(${index}, -1)" style="background:var(--bg); border:none; padding:2px 10px; cursor:pointer; color:var(--brown); font-weight:bold;">-</button>
+                <span style="font-size:0.9rem; padding:0 10px; background:var(--white); min-width:25px; text-align:center;">${item.qty}</span>
+                <button onclick="updateQty(${index}, 1)" style="background:var(--bg); border:none; padding:2px 10px; cursor:pointer; color:var(--brown); font-weight:bold;">+</button>
+              </div>
+            </div>
           </div>
         </div>
       `;
@@ -392,14 +417,7 @@ function renderCartItems() {
   if(totalEl) totalEl.textContent = `Total: ₹${total}`;
 }
 
-window.removeFromCart = (index) => {
-  cart.splice(index, 1);
-  localStorage.setItem('kraftloom_cart', JSON.stringify(cart));
-  updateCartCount();
-  renderCartItems();
-};
-
-function sendCartWhatsApp() {
+function sendCart(platform) {
   if (cart.length === 0) return;
   let text = `Hi Kraftloom! I want to order:\n\n`;
   let total = 0;
@@ -409,8 +427,18 @@ function sendCartWhatsApp() {
     text += `- ${i.Name} (x${i.qty}) - ₹${p * i.qty}\n`;
   });
   text += `\nTotal: ₹${total}`;
-  const msg = encodeURIComponent(text);
-  window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+  
+  if (platform === 'whatsapp') {
+    const msg = encodeURIComponent(text);
+    window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+  } else if (platform === 'instagram') {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Cart list copied! Paste it in the DM.');
+      setTimeout(() => {
+        window.open(`https://ig.me/m/${CONFIG.INSTAGRAM_HANDLE}`, '_blank');
+      }, 1500);
+    });
+  }
 }
 
 // Custom Order Form
@@ -423,20 +451,13 @@ function initCustomOrderForm() {
     if (form.honeypot && form.honeypot.value) return; 
     
     const btn = form.querySelector('button[type="submit"]');
-    if(btn) {
-      btn.textContent = 'Submitting...';
-      btn.disabled = true;
-    }
+    if(btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
 
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
     
     try {
-      const res = await fetch(CONFIG.SHEET_API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
-      
+      await fetch(CONFIG.SHEET_API_URL, { method: 'POST', body: JSON.stringify(payload) });
       const successDiv = document.getElementById('form-success');
       if (successDiv) successDiv.style.display = 'block';
       form.style.display = 'none';
@@ -450,10 +471,7 @@ function initCustomOrderForm() {
       }
     } catch(err) {
       showToast('Error submitting form. Please try again.');
-      if(btn) {
-        btn.textContent = 'Submit Request';
-        btn.disabled = false;
-      }
+      if(btn) { btn.textContent = 'Submit Request'; btn.disabled = false; }
     }
   });
 }
