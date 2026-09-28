@@ -48,33 +48,28 @@
   <main class="container">
     <h1>Shop Collection</h1>
     <div class="shop-layout">
-      <!-- Filters Sidebar -->
+      <!-- Filters Sidebar: Now uses Instant Radio Buttons -->
       <aside class="filters" id="filters-sidebar">
-        <form id="filter-form" action="shop.html" method="GET">
+        <div id="filter-form">
           <div class="filter-group">
-            <label>Search</label>
-            <input type="text" name="q" placeholder="Search products...">
+            <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Search</label>
+            <input type="text" id="filter-q" placeholder="Search products...">
           </div>
           <div class="filter-group">
-            <label>Category</label>
-            <select name="category">
-              <option value="">All Categories</option>
-              <option value="Crochet">Crochet</option>
-              <option value="Gifts">Gift Hampers</option>
-              <option value="Womens Accessories">Women's Accessories</option>
-              <option value="Kids Wear">Kids Wear</option>
-            </select>
+            <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Category</label>
+            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="" checked> All Categories</label>
+            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="Crochet"> Crochet</label>
+            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="Gifts"> Gift Hampers</label>
+            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="Womens Accessories"> Women's Accessories</label>
+            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="Kids Wear"> Kids Wear</label>
           </div>
           <div class="filter-group">
-            <label>Sort By</label>
-            <select name="sort">
-              <option value="newest">Newest First</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-            </select>
+            <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Sort By</label>
+            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="sort" value="newest" checked> Newest First</label>
+            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="sort" value="price-asc"> Price: Low to High</label>
+            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="sort" value="price-desc"> Price: High to Low</label>
           </div>
-          <button type="submit" class="btn btn-outline" style="width:100%">Apply Filters</button>
-        </form>
+        </div>
       </aside>
 
       <!-- Product Grid -->
