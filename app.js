@@ -234,28 +234,35 @@ function formatImageUrl(url) {
   return url;
 }
 
-// Modal Implementation
+
+// Mobile App-Style Modal
 function injectModal() {
   if (document.getElementById('product-modal')) return;
   const modalHTML = `
-    <div id="product-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; padding:20px;">
-      <div id="product-modal-content" style="background:var(--white); border-radius:12px; max-width:900px; width:100%; max-height:90vh; overflow-y:auto; position:relative; padding:2rem; display:grid; gap:2rem;">
-        <button onclick="closeModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:2rem; cursor:pointer; color:var(--brown); line-height:1;">&times;</button>
-        <div style="display:flex; flex-wrap:wrap; gap:2rem;">
-          <div style="flex:1; min-width:300px;">
-            <img id="modal-img" style="width:100%; border-radius:12px; object-fit:cover; aspect-ratio:1/1;">
+    <div id="product-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--overlay); z-index:9999; justify-content:center; align-items:center;">
+      <div id="product-modal-content" style="background:var(--bg); border-radius:12px; max-width:900px; width:100%; position:relative; overflow:hidden;">
+        <div style="display:flex; flex-wrap:wrap; height:100%;">
+          
+          <div class="modal-image-container" style="flex:1; min-width:300px;">
+            <button onclick="closeModal()" class="modal-close-btn" style="position:absolute; top:15px; right:15px; background:white; border:none; border-radius:50%; width:40px; height:40px; font-size:1.5rem; cursor:pointer; color:var(--brown); box-shadow:var(--shadow); z-index:10;">&times;</button>
+            <img id="modal-img" style="width:100%; height:100%; object-fit:cover;">
           </div>
-          <div style="flex:1; min-width:300px; display:flex; flex-direction:column; justify-content:center;">
-            <span id="modal-status" style="display:inline-block; padding:4px 12px; background:#e0f2f1; color:#00695c; border-radius:20px; font-size:0.8rem; margin-bottom:1rem; width:fit-content;"></span>
-            <h2 id="modal-title" style="margin-bottom:0.5rem; font-family:'Playfair Display', serif; font-size:2.5rem; color:var(--brown);"></h2>
+          
+          <div class="modal-details" style="flex:1; min-width:300px; background:var(--white); padding:2rem; display:flex; flex-direction:column; position:relative;">
+            <span id="modal-status" style="display:inline-block; padding:4px 12px; background:#e0f2f1; color:#00695c; border-radius:20px; font-size:0.8rem; margin-bottom:1rem; width:fit-content; font-weight:bold;"></span>
+            <h2 id="modal-title" class="modal-title" style="margin-bottom:0.5rem; font-family:'Playfair Display', serif; font-size:2.2rem; color:var(--brown);"></h2>
             <p id="modal-price" style="font-weight:700; color:var(--rose); font-size:1.5rem; margin-bottom:1.5rem;"></p>
-            <p id="modal-desc" style="margin-bottom:2rem; font-size:1rem; color:var(--brown); line-height:1.6;"></p>
-            <div style="display:flex; flex-direction:column; gap:10px;">
+            <p id="modal-desc" style="font-size:1rem; color:var(--brown); line-height:1.6; margin-bottom: 2rem;"></p>
+            
+            <div class="modal-bottom-bar" style="margin-top:auto; display:flex; flex-direction:column; gap:10px;">
                <button id="modal-btn-cart" class="btn btn-outline" style="width:100%;">Add to Cart</button>
-               <button id="modal-btn-wa" class="btn btn-primary" style="background:#25D366; width:100%; color:white; border:none;">Order on WhatsApp</button>
-               <button id="modal-btn-ig" class="btn btn-primary" style="background:linear-gradient(45deg, #f09433 0%, #bc1888 100%); width:100%; color:white; border:none;">Order on Instagram</button>
+               <div style="display:flex; gap:10px;">
+                 <button id="modal-btn-wa" class="btn btn-primary" style="background:#25D366; flex:1; border:none;">WhatsApp</button>
+                 <button id="modal-btn-ig" class="btn btn-primary" style="background:linear-gradient(45deg, #f09433 0%, #bc1888 100%); flex:1; border:none;">Instagram</button>
+               </div>
             </div>
           </div>
+          
         </div>
       </div>
     </div>
@@ -266,6 +273,7 @@ function injectModal() {
     if(e.target.id === 'product-modal') closeModal();
   });
 }
+
 
 window.openModal = function(encodedSlug) {
   const slug = decodeURIComponent(encodedSlug);
