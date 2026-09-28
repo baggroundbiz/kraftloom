@@ -2,69 +2,165 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request Custom Order | Kraftloom</title>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+  </style>
 </head>
 <body>
-  <!-- (Include Header, Toast, Cart) -->
   
-  <main class="container" style="max-width: 700px;">
-    <h1 style="text-align:center; margin-bottom: 1rem;">Let's Create Something Special</h1>
-    <p style="text-align:center; margin-bottom: 3rem;">Fill out the form below with your custom request, and we'll get back to you with a quote and timeline.</p>
+  <div id="global-toast" class="toast"></div>
+  
+  <div class="overlay" id="overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="close-cart" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+    </div>
+    <div class="cart-items" id="cart-items-container"></div>
+    <div class="cart-footer">
+      <h3 id="cart-total" style="margin-bottom:1rem;">Total: ₹0</h3>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" id="checkout-wa" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: #25D366; color: white; border: none;">WhatsApp</button>
+        <button class="btn btn-primary" id="checkout-ig" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: linear-gradient(45deg, #f09433, #bc1888); color: white; border: none;">Instagram</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <a href="index.html" class="logo">
+      <img src="assets/logo.png" alt="Kraftloom Logo">
+      Kraftloom
+    </a>
+    <button class="hamburger">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop All</a>
+      <a href="custom-order.html" style="color:var(--rose); font-weight:700;">Custom Orders</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button id="cart-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;position:relative;">
+        🛒 <span id="cart-count" style="position:absolute;top:-10px;right:-10px;background:var(--rose);color:white;border-radius:50%;width:20px;height:20px;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 800px;">
+    <div style="text-align:center; padding: 3rem 0;">
+      <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--brown);">Let's make something special.</h1>
+      <p style="font-size: 1.1rem;">Have an idea that isn't in our collection? Tell us what you're imagining.</p>
+    </div>
     
-    <div id="form-success" style="display:none; text-align:center; padding: 3rem; background: var(--white); border-radius: var(--radius);">
-      <h2 class="accent-text" style="font-size: 2rem;">Request Sent!</h2>
-      <p style="margin: 1rem 0;">We have received your custom order request. We'll review it and reach out shortly.</p>
-      <button id="continue-wa" class="btn btn-primary" style="background:#25D366;">Continue chat on WhatsApp</button>
+    <div id="form-success" style="display:none; text-align:center; padding: 4rem 2rem; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow);">
+      <h2 style="font-family:'Playfair Display', serif; font-size: 2.5rem; color: var(--rose); margin-bottom: 1rem;">Your request is with us! ❤️</h2>
+      <p style="margin-bottom: 1rem; font-size: 1.1rem;">Thank you for reaching out. We will review your request and get back to you shortly with pricing and a timeline.</p>
+      <p style="color: #666; font-size: 0.9rem; margin-bottom: 2.5rem;">Note: No payment has been requested yet.</p>
+      <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <button id="continue-wa" class="btn btn-primary" style="background:#25D366; color:white; border:none;">Continue on WhatsApp</button>
+        <a href="shop.html" class="btn btn-outline">Back to Shop</a>
+      </div>
     </div>
 
-    <form id="custom-form" style="background: var(--white); padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow);">
+    <form id="custom-form" style="background: var(--white); padding: 3rem; border-radius: var(--radius); box-shadow: var(--shadow);">
       <input type="text" name="honeypot" class="honeypot" tabindex="-1" autocomplete="off">
       
-      <div class="form-group">
-        <label>Name *</label>
-        <input type="text" name="name" required>
-      </div>
-      <div class="form-group">
-        <label>WhatsApp Number *</label>
-        <input type="tel" name="whatsapp" placeholder="+91" required>
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" name="email">
-      </div>
-      <div class="form-group">
-        <label>Type of Order *</label>
-        <select name="orderType" required>
-          <option value="">Select...</option>
-          <option value="Crochet">Crochet Item</option>
-          <option value="Hamper">Gift Hamper</option>
-          <option value="KidsWear">Kids Wear</option>
-          <option value="WomensAccessories">Women's Accessories</option>
-          <option value="TShirt">Custom T-Shirt Printing (Waitlist)</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Description of your request *</label>
-        <textarea name="description" rows="5" required placeholder="Colours, sizes, themes..."></textarea>
-      </div>
-      <div style="display:flex; gap:1rem;">
-        <div class="form-group" style="flex:1;">
-          <label>Quantity</label>
-          <input type="number" name="quantity" min="1" value="1">
+      <!-- Contact Info -->
+      <h3 style="margin-bottom: 1.5rem; font-family: 'Nunito', sans-serif; color: var(--rose); border-bottom: 1px solid var(--blush); padding-bottom: 0.5rem;">Your Details</h3>
+      <div class="form-grid">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Full Name *</label>
+          <input type="text" name="name" required>
         </div>
-        <div class="form-group" style="flex:1;">
-          <label>Needed by Date</label>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>WhatsApp Number *</label>
+          <input type="tel" name="whatsapp" placeholder="+91..." required>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Email Address</label>
+          <input type="email" name="email">
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Instagram Handle</label>
+          <input type="text" name="instagram" placeholder="@username">
+        </div>
+      </div>
+
+      <!-- Project Details -->
+      <h3 style="margin-bottom: 1.5rem; margin-top: 2rem; font-family: 'Nunito', sans-serif; color: var(--rose); border-bottom: 1px solid var(--blush); padding-bottom: 0.5rem;">Project Details</h3>
+      <div class="form-grid">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Category</label>
+          <select name="orderType">
+            <option value="Crochet">Crochet</option>
+            <option value="Gift Hamper">Gift Hamper</option>
+            <option value="Womens Accessories">Women's Accessories</option>
+            <option value="Kids Wear">Kids Wear</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Preferred Colors/Theme</label>
+          <input type="text" name="colors" placeholder="e.g., Pastel pinks, Boho neutral...">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Detailed Description *</label>
+        <textarea name="description" rows="5" required placeholder="Tell us about your idea, size requirements, and any special touches..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Reference Image Link</label>
+        <input type="url" name="reference" placeholder="Link to a Pinterest board, Instagram post, or Google Drive image">
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Needed By Date</label>
           <input type="date" name="neededBy">
         </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Budget Range</label>
+          <select name="budget">
+            <option value="">Select an option</option>
+            <option value="Under ₹1,000">Under ₹1,000</option>
+            <option value="₹1,000 - ₹2,500">₹1,000 - ₹2,500</option>
+            <option value="₹2,500 - ₹5,000">₹2,500 - ₹5,000</option>
+            <option value="₹5,000+">₹5,000+</option>
+          </select>
+        </div>
       </div>
-      <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Request</button>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; font-size: 1.1rem; padding: 1rem;">Send My Request</button>
     </form>
   </main>
   
-  <!-- (Include Footer) -->
+  <a href="https://wa.me/919876543210" class="floating-wa" target="_blank" aria-label="Chat on WhatsApp">💬</a>
+
+  <footer>
+    <div class="logo" style="justify-content:center; margin-bottom:1rem;">
+      <img src="assets/logo.png" alt="Kraftloom">
+    </div>
+    <p>27th Main Rd, nearby HSR Ceramics, 1st Sector, HSR Layout, Bengaluru 560102</p>
+    <div class="footer-links">
+      <a href="shop.html">Shop</a>
+      <a href="about.html">About</a>
+      <a href="policies.html">Policies</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Kraftloom. All rights reserved.</p>
+  </footer>
+  
   <script src="app.js" defer></script>
 </body>
 </html>
