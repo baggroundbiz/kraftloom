@@ -2,47 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Shop | Kraftloom</title>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Fixed Checkboxes overriding global stylesheet */
-    .filter-label {
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.8rem;
-      cursor: pointer;
-      font-size: 0.95rem;
-      color: var(--brown);
-    }
-    .filter-label input[type="radio"] {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 18px !important;
-      height: 18px !important;
-      flex-shrink: 0 !important;
-      border: 2px solid var(--brown) !important;
-      border-radius: 4px !important;
-      margin: 0 10px 0 0 !important;
-      padding: 0 !important;
-      background: var(--white) !important;
-      display: inline-block !important;
-      position: relative;
-    }
-    .filter-label input[type="radio"]:checked {
-      background-color: var(--rose) !important;
-      border-color: var(--rose) !important;
-    }
-    .filter-label input[type="radio"]:checked::after {
-      content: '✔';
-      color: white;
-      font-size: 11px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-  </style>
 </head>
 <body>
   
@@ -51,15 +14,15 @@
   <div class="overlay" id="overlay"></div>
   <div class="cart-drawer" id="cart-drawer">
     <div class="cart-header">
-      <h3>Your Cart</h3>
-      <button id="close-cart" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+      <h3 style="font-family:'Playfair Display', serif;">Your Cart</h3>
+      <button id="close-cart" style="background:none;border:none;font-size:2rem;cursor:pointer;line-height:1;color:var(--brown);">&times;</button>
     </div>
     <div class="cart-items" id="cart-items-container"></div>
     <div class="cart-footer">
-      <h3 id="cart-total" style="margin-bottom:1rem;">Total: ₹0</h3>
+      <h3 id="cart-total" style="margin-bottom:1rem; font-family:'Playfair Display', serif;">Total: ₹0</h3>
       <div style="display: flex; gap: 10px;">
-        <button class="btn btn-primary" id="checkout-wa" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: #25D366; color: white; border: none;">WhatsApp</button>
-        <button class="btn btn-primary" id="checkout-ig" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: linear-gradient(45deg, #f09433, #bc1888); color: white; border: none;">Instagram</button>
+        <button class="btn btn-primary" id="checkout-wa" style="flex: 1; font-size: 0.95rem; background: #25D366; color: white; border: none;">WhatsApp</button>
+        <button class="btn btn-primary" id="checkout-ig" style="flex: 1; font-size: 0.95rem; background: linear-gradient(45deg, #f09433, #bc1888); color: white; border: none;">Instagram</button>
       </div>
     </div>
   </div>
@@ -69,56 +32,51 @@
       <img src="assets/logo.png" alt="Kraftloom Logo">
       Kraftloom
     </a>
-    <button class="hamburger">☰</button>
     <nav class="nav-links">
       <a href="index.html">Home</a>
       <a href="shop.html" style="color:var(--rose); font-weight:700;">Shop All</a>
       <a href="custom-order.html">Custom Orders</a>
       <a href="about.html">About Us</a>
-      <a href="contact.html">Contact</a>
     </nav>
     <div class="nav-actions">
-      <button id="cart-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;position:relative;">
-        🛒 <span id="cart-count" style="position:absolute;top:-10px;right:-10px;background:var(--rose);color:white;border-radius:50%;width:20px;height:20px;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">0</span>
+      <button class="open-cart-btn" style="background:none;border:none;cursor:pointer;font-size:1.4rem;position:relative;">
+        🛒 <span class="cart-badge">0</span>
       </button>
     </div>
   </header>
   
   <main class="container">
-    <h1 style="margin-bottom: 1rem;">Shop Collection</h1>
+    <h1 style="margin-bottom: 1rem; text-align: center;">Shop Collection</h1>
     <div class="shop-layout">
       
       <aside class="filters" id="filters-sidebar">
         <div id="filter-form">
-          <div class="filter-group">
-            <label style="font-weight: 600; display: block; margin-bottom: 0.8rem;">Search</label>
-            <input type="text" id="filter-q" placeholder="Search products..." style="border: 1px solid var(--brown); border-radius: 6px; padding: 0.5rem; width: 100%;">
+          <div class="form-group">
+            <input type="text" id="filter-q" placeholder="Search products...">
           </div>
           
-          <div class="filter-group">
-            <label style="font-weight: 600; display: block; margin-bottom: 0.8rem; margin-top: 1.5rem;">Category</label>
-            <label class="filter-label"><input type="radio" name="category" value="" checked> All Categories</label>
-            <label class="filter-label"><input type="radio" name="category" value="Crochet"> Crochet</label>
-            <label class="filter-label"><input type="radio" name="category" value="Gifts"> Gift Hampers</label>
-            <label class="filter-label"><input type="radio" name="category" value="Womens Accessories"> Women's Accessories</label>
-            <label class="filter-label"><input type="radio" name="category" value="Kids Wear"> Kids Wear</label>
+          <div class="form-group">
+            <label style="margin-bottom: 0.8rem; font-family:'Playfair Display', serif; font-size:1.2rem;">Category</label>
+            <label class="filter-label"><input type="radio" name="category" value="" class="custom-radio" checked> All Categories</label>
+            <label class="filter-label"><input type="radio" name="category" value="Crochet" class="custom-radio"> Crochet</label>
+            <label class="filter-label"><input type="radio" name="category" value="Gifts" class="custom-radio"> Gift Hampers</label>
+            <label class="filter-label"><input type="radio" name="category" value="Womens Accessories" class="custom-radio"> Women's Accessories</label>
+            <label class="filter-label"><input type="radio" name="category" value="Kids Wear" class="custom-radio"> Kids Wear</label>
           </div>
           
-          <div class="filter-group">
-            <label style="font-weight: 600; display: block; margin-bottom: 0.8rem; margin-top: 1.5rem;">Sort By</label>
-            <label class="filter-label"><input type="radio" name="sort" value="newest" checked> Newest First</label>
-            <label class="filter-label"><input type="radio" name="sort" value="price-asc"> Price: Low to High</label>
-            <label class="filter-label"><input type="radio" name="sort" value="price-desc"> Price: High to Low</label>
+          <div class="form-group">
+            <label style="margin-bottom: 0.8rem; font-family:'Playfair Display', serif; font-size:1.2rem;">Sort By</label>
+            <label class="filter-label"><input type="radio" name="sort" value="newest" class="custom-radio" checked> Newest First</label>
+            <label class="filter-label"><input type="radio" name="sort" value="price-asc" class="custom-radio"> Price: Low to High</label>
+            <label class="filter-label"><input type="radio" name="sort" value="price-desc" class="custom-radio"> Price: High to Low</label>
           </div>
         </div>
       </aside>
 
       <section>
         <div class="grid grid-3" id="product-grid">
-           <!-- Skeletons loaded via JS, replaced instantly by cache -->
-           <div class="skeleton" style="height:350px;"></div>
-           <div class="skeleton" style="height:350px;"></div>
-           <div class="skeleton" style="height:350px;"></div>
+           <div class="skeleton" style="height:250px;"></div>
+           <div class="skeleton" style="height:250px;"></div>
         </div>
       </section>
     </div>
@@ -126,19 +84,25 @@
   
   <a href="https://wa.me/919876543210" class="floating-wa" target="_blank" aria-label="Chat on WhatsApp">💬</a>
 
-  <footer>
-    <div class="logo" style="justify-content:center; margin-bottom:1rem;">
-      <img src="assets/logo.png" alt="Kraftloom">
-    </div>
-    <p>27th Main Rd, nearby HSR Ceramics, 1st Sector, HSR Layout, Bengaluru 560102</p>
-    <div class="footer-links">
-      <a href="shop.html">Shop</a>
-      <a href="about.html">About</a>
-      <a href="policies.html">Policies</a>
-      <a href="contact.html">Contact</a>
-    </div>
-    <p>&copy; 2026 Kraftloom. All rights reserved.</p>
-  </footer>
+  <!-- App Bottom Nav for Mobile -->
+  <nav class="bottom-nav">
+    <a href="index.html">
+      <span class="icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="shop.html" class="active">
+      <span class="icon">🛍️</span>
+      <span>Shop</span>
+    </a>
+    <a href="custom-order.html">
+      <span class="icon">✨</span>
+      <span>Custom</span>
+    </a>
+    <a href="#" class="open-cart-btn">
+      <span class="icon" style="position:relative;">🛒<span class="cart-badge">0</span></span>
+      <span>Cart</span>
+    </a>
+  </nav>
 
   <script src="app.js" defer></script>
 </body>
