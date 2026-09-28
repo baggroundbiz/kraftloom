@@ -70,8 +70,8 @@
           <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Customer Love</h2>
           <p style="color: #666;">See what our Kraftloom family has to say.</p>
         </div>
-        <!-- Replace href="#" with your actual Google Business link -->
-        <a href="https://g.page/Kraftloom" target="_blank" class="btn btn-outline" style="font-size: 0.9rem;">Leave a Review on Google</a>
+        <!-- Link to actual Google Page -->
+        <a href="https://maps.app.goo.gl/T4BS93VJS8xkoiBd7" target="_blank" class="btn btn-outline" style="font-size: 0.9rem;">Leave a Review on Google</a>
       </div>
 
       <div class="grid grid-3" id="reviews-container">
@@ -111,38 +111,49 @@
 
   <script src="app.js" defer></script>
   
-  <!-- Review Filtering Script -->
+  <!-- Sheet Reviews Script -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Dummy data representing Google Reviews
-      const allReviews = [
-        { name: "Priya S.", rating: 5, text: "Absolutely loved the crochet tulips! They look so real and brighten up my desk in HSR.", date: "2 weeks ago" },
-        { name: "Rahul M.", rating: 4, text: "Great custom gift hamper for my wife's birthday. Excellent quality and packaging.", date: "1 month ago" },
-        { name: "Anjali K.", rating: 5, text: "The custom kids wear was perfectly sized, incredibly soft, and delivered on time. Will order again!", date: "2 months ago" },
-        { name: "Kiran V.", rating: 3, text: "Nice items but the delivery took a bit longer than expected due to rain.", date: "3 months ago" }, // Will be filtered out
-        { name: "Neha D.", rating: 5, text: "Beautiful aesthetic and attention to detail. Highly recommend Kraftloom for unique gifting.", date: "4 months ago" }
-      ];
-
-      // Filter to only show 4 and 5 star reviews
-      const topReviews = allReviews.filter(review => review.rating >= 4);
-
+    document.addEventListener("DOMContentLoaded", async () => {
       const container = document.getElementById("reviews-container");
-      
-      container.innerHTML = topReviews.map(review => {
-        // Generate star string (e.g. ★★★★★)
-        const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-        
-        return `
-          <div class="review-card">
-            <div class="stars">${stars}</div>
-            <p style="font-style: italic; color: var(--brown); margin: 0.5rem 0;">"${review.text}"</p>
-            <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--blush); display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-weight: 700; font-family: 'Playfair Display', serif;">${review.name}</span>
-              <span style="font-size: 0.8rem; color: #999;">${review.date}</span>
+      // Add loading skeletons
+      container.innerHTML = '<div class="skeleton" style="height: 150px; width: 100%;"></div>'.repeat(3); 
+
+      try {
+        const res = await fetch(CONFIG.SHEET_API_URL + "?action=reviews");
+        const reviews = await res.json();
+
+        if (!Array.isArray(reviews) || reviews.length === 0) {
+          container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Check back later to see what our customers are saying!</p>';
+          return;
+        }
+
+        // Filter for 4 and 5 star ratings based on Google Sheet 'Rating' column
+        const topReviews = reviews.filter(r => Number(r.Rating) >= 4);
+
+        if (topReviews.length === 0) {
+           container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">No reviews found.</p>';
+           return;
+        }
+
+        container.innerHTML = topReviews.map(r => {
+          const ratingNum = Number(r.Rating) || 5;
+          const stars = '★'.repeat(ratingNum) + '☆'.repeat(5 - ratingNum);
+          const reviewerName = r.Reviewer ? r.Reviewer.trim() : 'Happy Customer';
+          
+          return `
+            <div class="review-card">
+              <div class="stars">${stars}</div>
+              <p style="font-style: italic; color: var(--brown); margin: 0.5rem 0; font-size: 0.95rem;">"${r.Review}"</p>
+              <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--blush); text-align: right;">
+                <span style="font-weight: 700; font-family: 'Playfair Display', serif;">- ${reviewerName}</span>
+              </div>
             </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
+      } catch (err) {
+        console.error("Failed to fetch reviews", err);
+        container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Check back later to see what our customers are saying!</p>';
+      }
     });
   </script>
 </body>
