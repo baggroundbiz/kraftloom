@@ -40,7 +40,10 @@
     <div class="cart-items" id="cart-items-container"></div>
     <div class="cart-footer">
       <h3 id="cart-total" style="margin-bottom:1rem;">Total: ₹0</h3>
-      <button class="btn btn-primary" id="checkout-wa" style="width:100%;">Order via WhatsApp</button>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" id="checkout-wa" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: #25D366; color: white; border: none;">WhatsApp</button>
+        <button class="btn btn-primary" id="checkout-ig" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: linear-gradient(45deg, #f09433, #bc1888); color: white; border: none;">Instagram</button>
+      </div>
     </div>
   </div>
 
@@ -51,7 +54,7 @@
     </a>
     <button class="hamburger">☰</button>
     <nav class="nav-links">
-      <a href="index.html">Home</a>
+      <a href="index.html" style="color:var(--rose); font-weight:700;">Home</a>
       <a href="shop.html">Shop All</a>
       <a href="custom-order.html">Custom Orders</a>
       <a href="about.html">About Us</a>
