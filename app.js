@@ -6,13 +6,10 @@ const CONFIG = {
   SITE_URL: "https://kraftloom.com"
 };
 
-// State
 let products = [];
 let cart = JSON.parse(localStorage.getItem('kraftloom_cart')) || [];
 
-// Initialization
 document.addEventListener('DOMContentLoaded', () => {
-  initNav();
   initCart();
   initFilters();
   updateCartCount();
@@ -20,6 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
   
   let page = window.location.pathname.split('/').pop().replace('.html', '');
   if (!page || page === '') page = 'index'; 
+  
+  document.querySelectorAll('.bottom-nav a').forEach(link => {
+    if(link.getAttribute('href').includes(page)) link.classList.add('active');
+  });
   
   if (['index', 'shop', 'product'].includes(page)) {
     fetchProducts(page);
@@ -29,17 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// UI & Nav
-function initNav() {
-  const hamburger = document.querySelector('.hamburger');
-  const navLinks = document.querySelector('.nav-links');
-  if(hamburger && navLinks) {
-    hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-    });
-  }
-}
-
 function showToast(message) {
   const toast = document.getElementById('global-toast');
   if(!toast) return;
@@ -48,16 +38,13 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Data Fetching
 async function fetchProducts(page) {
   const cached = localStorage.getItem('kraftloom_products');
   if (cached) {
     try {
       products = JSON.parse(cached);
       if (products.length > 0) routePageLogic(page);
-    } catch (e) {
-      console.error("Cache read error", e);
-    }
+    } catch (e) {}
   }
   fetchDataSilently(page);
 }
@@ -66,19 +53,11 @@ async function fetchDataSilently(page) {
   try {
     const res = await fetch(CONFIG.SHEET_API_URL);
     let data = await res.json();
-    
-    if (data && data.data && Array.isArray(data.data)) {
-      data = data.data;
-    }
-    
-    if (!Array.isArray(data)) {
-      data = [];
-    }
+    if (data && data.data && Array.isArray(data.data)) data = data.data;
+    if (!Array.isArray(data)) data = [];
 
     products = data.map(p => {
-      if (!p.Slug && p.Name) {
-        p.Slug = String(p.Name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-      }
+      if (!p.Slug && p.Name) p.Slug = String(p.Name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
       return p;
     }).filter(p => {
       const status = String(p.Status || '').trim().toLowerCase();
@@ -95,28 +74,36 @@ async function fetchDataSilently(page) {
 function routePageLogic(page) {
   if (page === 'index') renderHome();
   if (page === 'shop') renderShop();
-  if (page === 'product') renderProductPage();
+  if (page === 'product') {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('slug')) window.location.href = `shop.html?q=${params.get('slug')}`;
+  }
 }
 
-// Instant Filter Initialization
 function initFilters() {
   const qInput = document.getElementById('filter-q');
   const catRadios = document.querySelectorAll('input[name="category"]');
   const sortRadios = document.querySelectorAll('input[name="sort"]');
+  const toggleBtn = document.getElementById('toggle-filters-btn');
+  const sidebar = document.getElementById('filters-sidebar');
+
+  // Mobile Filter Dropdown Logic
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('show');
+    });
+  }
 
   if (!qInput && catRadios.length === 0) return;
 
   const params = new URLSearchParams(window.location.search);
   if (qInput && params.get('q')) qInput.value = params.get('q');
   
-  const catParam = params.get('category');
-  if (catParam) {
-    catRadios.forEach(r => { if (r.value === catParam) r.checked = true; });
+  if (params.get('category')) {
+    catRadios.forEach(r => { if (r.value === params.get('category')) r.checked = true; });
   }
-  
-  const sortParam = params.get('sort');
-  if (sortParam) {
-    sortRadios.forEach(r => { if (r.value === sortParam) r.checked = true; });
+  if (params.get('sort')) {
+    sortRadios.forEach(r => { if (r.value === params.get('sort')) r.checked = true; });
   }
 
   const updateShop = () => {
@@ -129,10 +116,11 @@ function initFilters() {
     const activeSort = document.querySelector('input[name="sort"]:checked');
     if (activeSort && activeSort.value) newParams.set('sort', activeSort.value);
     
-    const newUrl = `${window.location.pathname}?${newParams.toString()}`;
-    window.history.replaceState({}, '', newUrl);
-    
+    window.history.replaceState({}, '', `${window.location.pathname}?${newParams.toString()}`);
     renderShop();
+    
+    // Auto-close filters on mobile after selecting an option
+    if(window.innerWidth <= 768 && sidebar) sidebar.classList.remove('show');
   };
 
   if (qInput) {
@@ -145,14 +133,11 @@ function initFilters() {
   sortRadios.forEach(r => r.addEventListener('change', updateShop));
 }
 
-// Render Functions
 function renderHome() {
   const featuredContainer = document.getElementById('featured-products');
   if (!featuredContainer) return;
-  
   let featured = products.filter(p => String(p.Featured).toUpperCase() === "TRUE" || p.Featured === true).slice(0, 4);
   if (featured.length === 0) featured = products.slice(0, 4);
-  
   featuredContainer.innerHTML = featured.map(p => createProductCard(p)).join('');
 }
 
@@ -176,49 +161,31 @@ function renderShop() {
   }
 
   if (query) {
-    filtered = filtered.filter(p =>
-      String(p.Name || '').toLowerCase().includes(query.toLowerCase())
-    );
+    filtered = filtered.filter(p => String(p.Name || '').toLowerCase().includes(query.toLowerCase()));
   }
 
-  if (sort === 'price-asc') {
-    filtered.sort((a, b) => Number(a.SalePrice || a.Price || 0) - Number(b.SalePrice || b.Price || 0));
-  }
-  if (sort === 'price-desc') {
-    filtered.sort((a, b) => Number(b.SalePrice || b.Price || 0) - Number(a.SalePrice || a.Price || 0));
-  }
-  if (sort === 'newest') {
-    filtered.sort((a, b) => new Date(b.DateAdded || 0) - new Date(a.DateAdded || 0));
-  }
+  if (sort === 'price-asc') filtered.sort((a, b) => Number(a.SalePrice || a.Price || 0) - Number(b.SalePrice || b.Price || 0));
+  if (sort === 'price-desc') filtered.sort((a, b) => Number(b.SalePrice || b.Price || 0) - Number(a.SalePrice || a.Price || 0));
+  if (sort === 'newest') filtered.sort((a, b) => new Date(b.DateAdded || 0) - new Date(a.DateAdded || 0));
 
   if (filtered.length === 0) {
-    grid.innerHTML = `
-      <div style="grid-column:1/-1;text-align:center;padding:3rem;">
-        <h3 style="font-family:'Playfair Display', serif; font-size:1.5rem; color:var(--brown);">No products found</h3>
-        <p>Try adjusting your filters or search term.</p>
-      </div>
-    `;
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;"><h3 style="font-family:'Playfair Display', serif; font-size:1.5rem; color:var(--brown);">No products found</h3><p>Try adjusting your filters or search term.</p></div>`;
     return;
   }
-
   grid.innerHTML = filtered.map(p => createProductCard(p)).join('');
 }
 
 function createProductCard(p) {
   const price = Number(p.Price || 0);
   const salePrice = Number(p.SalePrice || 0);
-
-  const priceDisplay = salePrice
-    ? `<span class="strike">₹${price}</span> ₹${salePrice}`
-    : `₹${price}`;
-
+  const priceDisplay = salePrice ? `<span class="strike">₹${price}</span> ₹${salePrice}` : `₹${price}`;
   const badge = salePrice ? `<span class="badge">SALE</span>` : '';
   const imgUrl = formatImageUrl(p.Image1);
 
   return `
-    <div class="product-card" style="cursor:pointer;" onclick="openModal('${encodeURIComponent(p.Slug || '')}')">
+    <div class="product-card" onclick="openModal('${encodeURIComponent(p.Slug || '')}')">
       ${badge}
-      <img src="${imgUrl}" alt="${p.Name || 'Kraftloom product'}" loading="lazy" width="600" height="600">
+      <img src="${imgUrl}" alt="${p.Name || 'Product'}" loading="lazy">
       <h3>${p.Name || 'Product'}</h3>
       <p class="price">${priceDisplay}</p>
     </div>
@@ -234,36 +201,38 @@ function formatImageUrl(url) {
   return url;
 }
 
-
-// Mobile App-Style Modal
+// Strictly Structured Modal (Fixes CTAs falling off screen)
 function injectModal() {
   if (document.getElementById('product-modal')) return;
   const modalHTML = `
-    <div id="product-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--overlay); z-index:9999; justify-content:center; align-items:center;">
-      <div id="product-modal-content" style="background:var(--bg); border-radius:12px; max-width:900px; width:100%; position:relative; overflow:hidden;">
-        <div style="display:flex; flex-wrap:wrap; height:100%;">
-          
-          <div class="modal-image-container" style="flex:1; min-width:300px;">
-            <button onclick="closeModal()" class="modal-close-btn" style="position:absolute; top:15px; right:15px; background:white; border:none; border-radius:50%; width:40px; height:40px; font-size:1.5rem; cursor:pointer; color:var(--brown); box-shadow:var(--shadow); z-index:10;">&times;</button>
+    <div id="product-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--overlay); z-index:9999; justify-content:center; align-items:flex-end;">
+      
+      <div id="product-modal-content" style="background:var(--bg); width:100%; max-width:600px; height:88vh; border-radius:24px 24px 0 0; display:flex; flex-direction:column; position:relative; overflow:hidden;">
+        
+        <button onclick="closeModal()" style="position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.9); border:none; border-radius:50%; width:36px; height:36px; font-size:1.5rem; cursor:pointer; color:var(--brown); box-shadow:var(--shadow); z-index:10; display:flex; align-items:center; justify-content:center;">&times;</button>
+        
+        <!-- Scrollable Top Half -->
+        <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
+          <div style="height:45vh; flex-shrink:0; background:var(--white);">
             <img id="modal-img" style="width:100%; height:100%; object-fit:cover;">
           </div>
-          
-          <div class="modal-details" style="flex:1; min-width:300px; background:var(--white); padding:2rem; display:flex; flex-direction:column; position:relative;">
-            <span id="modal-status" style="display:inline-block; padding:4px 12px; background:#e0f2f1; color:#00695c; border-radius:20px; font-size:0.8rem; margin-bottom:1rem; width:fit-content; font-weight:bold;"></span>
-            <h2 id="modal-title" class="modal-title" style="margin-bottom:0.5rem; font-family:'Playfair Display', serif; font-size:2.2rem; color:var(--brown);"></h2>
-            <p id="modal-price" style="font-weight:700; color:var(--rose); font-size:1.5rem; margin-bottom:1.5rem;"></p>
-            <p id="modal-desc" style="font-size:1rem; color:var(--brown); line-height:1.6; margin-bottom: 2rem;"></p>
-            
-            <div class="modal-bottom-bar" style="margin-top:auto; display:flex; flex-direction:column; gap:10px;">
-               <button id="modal-btn-cart" class="btn btn-outline" style="width:100%;">Add to Cart</button>
-               <div style="display:flex; gap:10px;">
-                 <button id="modal-btn-wa" class="btn btn-primary" style="background:#25D366; flex:1; border:none;">WhatsApp</button>
-                 <button id="modal-btn-ig" class="btn btn-primary" style="background:linear-gradient(45deg, #f09433 0%, #bc1888 100%); flex:1; border:none;">Instagram</button>
-               </div>
-            </div>
+          <div style="padding:1.5rem; background:var(--white); flex:1;">
+            <span id="modal-status" style="display:inline-block; padding:4px 12px; background:#e0f2f1; color:#00695c; border-radius:20px; font-size:0.8rem; margin-bottom:1rem; font-weight:bold;"></span>
+            <h2 id="modal-title" style="margin-bottom:0.5rem; font-family:'Playfair Display', serif; font-size:1.8rem; color:var(--brown); line-height:1.2;"></h2>
+            <p id="modal-price" style="font-weight:700; color:var(--rose); font-size:1.3rem; margin-bottom:1rem;"></p>
+            <p id="modal-desc" style="font-size:0.95rem; color:var(--brown); line-height:1.5;"></p>
           </div>
-          
         </div>
+        
+        <!-- Locked Bottom Bar for CTAs -->
+        <div style="flex-shrink:0; background:var(--white); padding:12px 15px; box-shadow:0 -4px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:10px; padding-bottom:calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #f0e6d8;">
+           <button id="modal-btn-cart" class="btn btn-outline" style="width:100%; padding:0.75rem;">Add to Cart</button>
+           <div style="display:flex; gap:10px;">
+             <button id="modal-btn-wa" class="btn btn-primary" style="background:#25D366; flex:1; border:none; padding:0.75rem;">WhatsApp</button>
+             <button id="modal-btn-ig" class="btn btn-primary" style="background:linear-gradient(45deg, #f09433 0%, #bc1888 100%); flex:1; border:none; padding:0.75rem;">Instagram</button>
+           </div>
+        </div>
+
       </div>
     </div>
   `;
@@ -273,7 +242,6 @@ function injectModal() {
     if(e.target.id === 'product-modal') closeModal();
   });
 }
-
 
 window.openModal = function(encodedSlug) {
   const slug = decodeURIComponent(encodedSlug);
@@ -307,15 +275,6 @@ window.closeModal = function() {
   }
 }
 
-function renderProductPage() {
-  const params = new URLSearchParams(window.location.search);
-  const slug = params.get('slug');
-  if (slug) {
-    window.location.href = `shop.html?q=${slug}`;
-  }
-}
-
-// Messaging Templates
 function buildMessage(product) {
   const price = product.SalePrice || product.Price;
   return `Hi Kraftloom! 👋\n\nI'd like to place an order for:\n*${product.Name}*\nPrice: ₹${price}\n\nPlease let me know how to proceed with payment!`;
@@ -329,25 +288,29 @@ function orderViaWhatsApp(product) {
 function orderViaInstagram(product) {
   navigator.clipboard.writeText(buildMessage(product)).then(() => {
     showToast('Message copied! Paste it in the DM.');
-    setTimeout(() => {
-      window.open(`https://ig.me/m/${CONFIG.INSTAGRAM_HANDLE}`, '_blank');
-    }, 1500);
+    setTimeout(() => { window.open(`https://ig.me/m/${CONFIG.INSTAGRAM_HANDLE}`, '_blank'); }, 1500);
   });
 }
 
 function initCart() {
-  const cartBtn = document.getElementById('cart-btn');
+  const cartBtns = document.querySelectorAll('.open-cart-btn');
   const cartDrawer = document.getElementById('cart-drawer');
   const closeCart = document.getElementById('close-cart');
   const overlay = document.getElementById('overlay');
   
-  const toggleCart = () => {
+  const toggleCart = (e) => {
+    if(e) e.preventDefault();
     if(cartDrawer) cartDrawer.classList.toggle('open');
     if(overlay) overlay.classList.toggle('show');
+    if(cartDrawer.classList.contains('open')) {
+       document.body.style.overflow = 'hidden';
+    } else {
+       document.body.style.overflow = '';
+    }
     renderCartItems();
   };
 
-  if(cartBtn) cartBtn.addEventListener('click', toggleCart);
+  cartBtns.forEach(btn => btn.addEventListener('click', toggleCart));
   if(closeCart) closeCart.addEventListener('click', toggleCart);
   if(overlay) overlay.addEventListener('click', toggleCart);
 
@@ -381,8 +344,8 @@ window.updateQty = function(index, delta) {
 };
 
 function updateCartCount() {
-  const countSpan = document.getElementById('cart-count');
-  if(countSpan) countSpan.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+  const count = cart.reduce((sum, item) => sum + item.qty, 0);
+  document.querySelectorAll('.cart-badge').forEach(el => el.textContent = count);
 }
 
 function renderCartItems() {
@@ -402,11 +365,11 @@ function renderCartItems() {
           <div style="flex:1;">
             <h4 style="font-size:0.95rem; margin-bottom:4px; font-family:'Nunito', sans-serif;">${item.Name}</h4>
             <p style="font-size:0.95rem; font-weight:700; color:var(--rose); margin-bottom:8px;">₹${price}</p>
-            <div style="display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center;">
               <div style="display:flex; align-items:center; border:1px solid var(--blush); border-radius:4px; overflow:hidden;">
-                <button onclick="updateQty(${index}, -1)" style="background:var(--bg); border:none; padding:2px 10px; cursor:pointer; color:var(--brown); font-weight:bold;">-</button>
-                <span style="font-size:0.9rem; padding:0 10px; background:var(--white); min-width:25px; text-align:center;">${item.qty}</span>
-                <button onclick="updateQty(${index}, 1)" style="background:var(--bg); border:none; padding:2px 10px; cursor:pointer; color:var(--brown); font-weight:bold;">+</button>
+                <button onclick="updateQty(${index}, -1)" style="background:var(--bg); border:none; padding:2px 12px; cursor:pointer; color:var(--brown); font-weight:bold; font-size:1.1rem;">-</button>
+                <span style="font-size:0.95rem; padding:0 12px; background:var(--white); min-width:30px; text-align:center;">${item.qty}</span>
+                <button onclick="updateQty(${index}, 1)" style="background:var(--bg); border:none; padding:2px 12px; cursor:pointer; color:var(--brown); font-weight:bold; font-size:1.1rem;">+</button>
               </div>
             </div>
           </div>
@@ -436,14 +399,11 @@ function sendCart(platform) {
   } else if (platform === 'instagram') {
     navigator.clipboard.writeText(text).then(() => {
       showToast('Cart list copied! Paste it in the DM.');
-      setTimeout(() => {
-        window.open(`https://ig.me/m/${CONFIG.INSTAGRAM_HANDLE}`, '_blank');
-      }, 1500);
+      setTimeout(() => { window.open(`https://ig.me/m/${CONFIG.INSTAGRAM_HANDLE}`, '_blank'); }, 1500);
     });
   }
 }
 
-// Custom Order Form
 function initCustomOrderForm() {
   const form = document.getElementById('custom-form');
   if (!form) return;
@@ -473,7 +433,7 @@ function initCustomOrderForm() {
       }
     } catch(err) {
       showToast('Error submitting form. Please try again.');
-      if(btn) { btn.textContent = 'Submit Request'; btn.disabled = false; }
+      if(btn) { btn.textContent = 'Send My Request'; btn.disabled = false; }
     }
   });
 }
