@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCart();
   initFilters();
   updateCartCount();
-  injectModal(); // Preload the modal HTML into the DOM
+  injectModal(); 
   
   let page = window.location.pathname.split('/').pop().replace('.html', '');
   if (!page || page === '') page = 'index'; 
@@ -48,7 +48,7 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Data Fetching (Stale-While-Revalidate for Instant Loading)
+// Data Fetching
 async function fetchProducts(page) {
   const cached = localStorage.getItem('kraftloom_products');
   if (cached) {
@@ -59,7 +59,6 @@ async function fetchProducts(page) {
       console.error("Cache read error", e);
     }
   }
-  // Fetch fresh data in the background
   fetchDataSilently(page);
 }
 
@@ -87,7 +86,7 @@ async function fetchDataSilently(page) {
     });
     
     localStorage.setItem('kraftloom_products', JSON.stringify(products));
-    routePageLogic(page); // Re-render with fresh data
+    routePageLogic(page);
   } catch (err) {
     console.error("Failed to load products", err);
   }
@@ -96,7 +95,7 @@ async function fetchDataSilently(page) {
 function routePageLogic(page) {
   if (page === 'index') renderHome();
   if (page === 'shop') renderShop();
-  if (page === 'product') renderProductPage(); // Kept as fallback for old direct links
+  if (page === 'product') renderProductPage();
 }
 
 // Instant Filter Initialization
@@ -168,7 +167,6 @@ function renderShop() {
 
   let filtered = [...products];
 
-  // Fuzzy Category filter to avoid matching errors
   if (category) {
     const searchCat = category.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
     filtered = filtered.filter(p => {
@@ -217,7 +215,6 @@ function createProductCard(p) {
   const badge = salePrice ? `<span class="badge">SALE</span>` : '';
   const imgUrl = formatImageUrl(p.Image1);
 
-  // Now triggers openModal instead of navigating
   return `
     <div class="product-card" style="cursor:pointer;" onclick="openModal('${encodeURIComponent(p.Slug || '')}')">
       ${badge}
@@ -265,7 +262,6 @@ function injectModal() {
   `;
   document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-  // Close on outside click
   document.getElementById('product-modal').addEventListener('click', (e) => {
     if(e.target.id === 'product-modal') closeModal();
   });
@@ -303,20 +299,18 @@ window.closeModal = function() {
   }
 }
 
-// Fallback for direct links
 function renderProductPage() {
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
   if (slug) {
-    // If they hit product.html, just redirect them to shop and open modal
     window.location.href = `shop.html?q=${slug}`;
   }
 }
 
-// Ordering & Cart
+// Messaging Templates
 function buildMessage(product) {
   const price = product.SalePrice || product.Price;
-  return `Hi Kraftloom! I'd like to order:\n${product.Name}\nPrice: ₹${price}`;
+  return `Hi Kraftloom! 👋\n\nI'd like to place an order for:\n*${product.Name}*\nPrice: ₹${price}\n\nPlease let me know how to proceed with payment!`;
 }
 
 function orderViaWhatsApp(product) {
@@ -419,14 +413,14 @@ function renderCartItems() {
 
 function sendCart(platform) {
   if (cart.length === 0) return;
-  let text = `Hi Kraftloom! I want to order:\n\n`;
+  let text = `Hi Kraftloom! 👋\n\nI'd like to place an order for the items in my cart:\n\n`;
   let total = 0;
   cart.forEach(i => {
     const p = i.SalePrice || i.Price;
     total += p * i.qty;
-    text += `- ${i.Name} (x${i.qty}) - ₹${p * i.qty}\n`;
+    text += `▪️ *${i.Name}* (Qty: ${i.qty}) - ₹${p * i.qty}\n`;
   });
-  text += `\nTotal: ₹${total}`;
+  text += `\n*Total: ₹${total}*\n\nPlease let me know how to proceed with payment!`;
   
   if (platform === 'whatsapp') {
     const msg = encodeURIComponent(text);
@@ -465,7 +459,7 @@ function initCustomOrderForm() {
       const continueBtn = document.getElementById('continue-wa');
       if (continueBtn) {
         continueBtn.onclick = () => {
-          const msg = encodeURIComponent(`Hi, I just submitted a custom order request for: ${payload.orderType}. Name: ${payload.name}`);
+          const msg = encodeURIComponent(`Hi Kraftloom! 👋\n\nI just submitted a custom order request on the website under the name *${payload.name}*.\n\nCould we discuss the details?`);
           window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${msg}`, '_blank');
         };
       }
