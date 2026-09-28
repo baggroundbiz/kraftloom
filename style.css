@@ -65,12 +65,14 @@ header { position: sticky; top: 0; background: var(--white); z-index: 100; box-s
 .price { font-weight: 700; color: var(--rose); margin-top: auto; padding-top: 0.5rem; }
 .strike { text-decoration: line-through; color: #999; font-size: 0.9rem; margin-right: 0.5rem; font-weight: 400; }
 
-/* Cart Drawer */
-.cart-drawer { position: fixed; top: 0; right: -400px; width: 100%; max-width: 400px; height: 100dvh; background: var(--bg); box-shadow: -4px 0 15px rgba(0,0,0,0.1); z-index: 1000; transition: right 0.3s ease; display: flex; flex-direction: column; }
+/* =========================================================================
+   BULLETPROOF FLEX CART DRAWER 
+   ========================================================================= */
+.cart-drawer { position: fixed; top: 0; right: -400px; width: 100%; max-width: 400px; height: 100%; height: 100dvh; background: var(--bg); box-shadow: -4px 0 15px rgba(0,0,0,0.1); z-index: 1000; transition: right 0.3s ease; display: flex; flex-direction: column; }
 .cart-drawer.open { right: 0; }
-.cart-header { padding: 1.5rem; border-bottom: 1px solid var(--blush); display: flex; justify-content: space-between; align-items: center; background: var(--white); }
-.cart-items { flex: 1; overflow-y: auto; padding: 1.5rem; }
-.cart-footer { padding: 1.5rem; border-top: 1px solid var(--blush); background: var(--white); padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); }
+.cart-header { padding: 1.5rem; border-bottom: 1px solid var(--blush); display: flex; justify-content: space-between; align-items: center; background: var(--white); flex: 0 0 auto; }
+.cart-items { flex: 1 1 auto; overflow-y: auto; padding: 1.5rem; }
+.cart-footer { padding: 1.5rem; border-top: 1px solid var(--blush); background: var(--white); padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); flex: 0 0 auto; }
 .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); z-index: 999; display: none; }
 .overlay.show { display: block; }
 
@@ -97,15 +99,16 @@ footer { background: var(--white); padding: 3rem 5%; text-align: center; margin-
 .review-card { background: var(--white); padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 0.5rem; }
 .stars { color: #FFD700; font-size: 1.2rem; letter-spacing: 2px; }
 
-/* Premium Desktop Modal Split Layout */
+/* =========================================================================
+   BULLETPROOF FLEX DESKTOP MODAL 
+   ========================================================================= */
 #product-modal-content { display: flex; flex-direction: row; width: 100%; max-width: 900px; height: 80vh; max-height: 700px; background: var(--white); border-radius: 20px; overflow: hidden; position: relative; }
-.modal-split-img { flex: 1; height: 100%; background: #f9f9f9; }
+.modal-split-img { flex: 1 1 50%; height: 100%; background: #f9f9f9; }
 .modal-split-img img { width: 100%; height: 100%; object-fit: cover; }
-.modal-split-content { flex: 1; display: flex; flex-direction: column; height: 100%; }
-.modal-details-top { flex: 1; padding: 3rem; overflow-y: auto; }
-.modal-details-bottom { flex-shrink: 0; padding: 2rem 3rem; border-top: 1px solid var(--blush); background: var(--white); display: flex; flex-direction: column; gap: 10px; }
+.modal-split-content { flex: 1 1 50%; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+.modal-details-top { flex: 1 1 auto; padding: 3rem; overflow-y: auto; }
+.modal-details-bottom { flex: 0 0 auto; padding: 2rem 3rem; border-top: 1px solid var(--blush); background: var(--white); display: flex; flex-direction: column; gap: 10px; }
 .modal-close-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.5rem; cursor: pointer; color: var(--brown); box-shadow: var(--shadow); z-index: 10; display: flex; align-items: center; justify-content: center; }
-
 
 /* =========================================================================
    MOBILE APP OPTIMIZATIONS
@@ -138,32 +141,33 @@ footer { background: var(--white); padding: 3rem 5%; text-align: center; margin-
   .floating-wa svg { width: 30px; height: 30px; }
   .cart-drawer { width: 100%; max-width: 100%; right: -100%; }
   
-  /* STRICTLY DEFINED HEIGHTS TO PREVENT CTA OVERFLOW */
+  /* =========================================================================
+     BULLETPROOF FLEX MOBILE MODAL (Adapts mathematically to ANY screen)
+     ========================================================================= */
   #product-modal { padding: 0 !important; align-items: flex-end !important; }
   
   #product-modal-content { 
     flex-direction: column !important; 
-    height: 85dvh !important; /* Cap total height safely within view */
-    max-height: 85dvh !important; 
+    height: 90% !important; /* Fallback for older browsers */
+    height: 90dvh !important; /* Matches exactly 90% of viewable screen */
+    max-height: 90dvh !important; 
     border-radius: 24px 24px 0 0 !important; 
     animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
   }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
   
   .modal-split-img { 
-    height: 35dvh !important; 
-    flex: none !important; 
+    flex: 0 0 40% !important; /* Hard-locks image to exactly 40% of modal height */
+    height: auto !important; 
   }
   
   .modal-split-content { 
-    height: 50dvh !important; 
-    flex: none !important; 
-    overflow: hidden !important; 
+    flex: 1 1 auto !important; /* Forces content block to absorb remaining space */
+    height: auto !important; 
   }
   
   .modal-details-top { 
     padding: 1.5rem !important; 
-    overflow-y: auto !important; 
   }
   
   .modal-details-bottom { 
