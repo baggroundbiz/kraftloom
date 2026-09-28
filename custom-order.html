@@ -2,35 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request Custom Order | Kraftloom</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Custom Orders | Kraftloom</title>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem 1.5rem; margin-bottom: 1.5rem; }
+    .page-header { text-align:center; padding: 3rem 1rem; background: var(--white); border-bottom: 1px solid var(--blush); margin-bottom: 2rem; }
   </style>
 </head>
 <body>
   
   <div id="global-toast" class="toast"></div>
-  
   <div class="overlay" id="overlay"></div>
   <div class="cart-drawer" id="cart-drawer">
     <div class="cart-header">
-      <h3>Your Cart</h3>
-      <button id="close-cart" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+      <h3 style="font-family:'Playfair Display', serif;">Your Cart</h3>
+      <button id="close-cart" style="background:none;border:none;font-size:2rem;cursor:pointer;line-height:1;color:var(--brown);">&times;</button>
     </div>
     <div class="cart-items" id="cart-items-container"></div>
     <div class="cart-footer">
-      <h3 id="cart-total" style="margin-bottom:1rem;">Total: ₹0</h3>
+      <h3 id="cart-total" style="margin-bottom:1rem; font-family:'Playfair Display', serif;">Total: ₹0</h3>
       <div style="display: flex; gap: 10px;">
-        <button class="btn btn-primary" id="checkout-wa" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: #25D366; color: white; border: none;">WhatsApp</button>
-        <button class="btn btn-primary" id="checkout-ig" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: linear-gradient(45deg, #f09433, #bc1888); color: white; border: none;">Instagram</button>
+        <button class="btn btn-primary" id="checkout-wa" style="flex: 1; font-size: 0.95rem; background: #25D366; border: none;">WhatsApp</button>
+        <button class="btn btn-primary" id="checkout-ig" style="flex: 1; font-size: 0.95rem; background: linear-gradient(45deg, #f09433, #bc1888); border: none;">Instagram</button>
       </div>
     </div>
   </div>
@@ -40,42 +35,44 @@
       <img src="assets/logo.png" alt="Kraftloom Logo">
       Kraftloom
     </a>
-    <button class="hamburger">☰</button>
     <nav class="nav-links">
       <a href="index.html">Home</a>
       <a href="shop.html">Shop All</a>
       <a href="custom-order.html" style="color:var(--rose); font-weight:700;">Custom Orders</a>
       <a href="about.html">About Us</a>
-      <a href="contact.html">Contact</a>
     </nav>
     <div class="nav-actions">
-      <button id="cart-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;position:relative;">
-        🛒 <span id="cart-count" style="position:absolute;top:-10px;right:-10px;background:var(--rose);color:white;border-radius:50%;width:20px;height:20px;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">0</span>
+      <button class="open-cart-btn" style="background:none;border:none;cursor:pointer;font-size:1.4rem;position:relative;">
+        🛒 <span class="cart-badge">0</span>
       </button>
     </div>
   </header>
 
-  <main class="container" style="max-width: 800px;">
-    <div style="text-align:center; padding: 3rem 0;">
-      <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--brown);">Let's make something special.</h1>
-      <p style="font-size: 1.1rem;">Have an idea that isn't in our collection? Tell us what you're imagining.</p>
+  <div class="page-header">
+    <div class="container" style="padding: 0;">
+      <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem; line-height:1.2;">Let's make something special.</h1>
+      <p style="font-size: 1rem; color: #666;">Have an idea that isn't in our collection?<br>Tell us what you're imagining.</p>
     </div>
+  </div>
+
+  <main class="container" style="max-width: 800px; padding-top: 0;">
     
     <div id="form-success" style="display:none; text-align:center; padding: 4rem 2rem; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow);">
-      <h2 style="font-family:'Playfair Display', serif; font-size: 2.5rem; color: var(--rose); margin-bottom: 1rem;">Your request is with us! ❤️</h2>
-      <p style="margin-bottom: 1rem; font-size: 1.1rem;">Thank you for reaching out. We will review your request and get back to you shortly with pricing and a timeline.</p>
-      <p style="color: #666; font-size: 0.9rem; margin-bottom: 2.5rem;">Note: No payment has been requested yet.</p>
+      <h2 style="font-family:'Playfair Display', serif; font-size: 2rem; color: var(--rose); margin-bottom: 1rem;">Your request is with us! ❤️</h2>
+      <p style="margin-bottom: 1rem; font-size: 1.1rem;">Thank you for reaching out. We will review your request and get back to you shortly to discuss pricing and delivery.</p>
+      <p style="color: #999; font-size: 0.9rem; margin-bottom: 2.5rem;">Note: No payment has been made yet.</p>
       <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-        <button id="continue-wa" class="btn btn-primary" style="background:#25D366; color:white; border:none;">Continue on WhatsApp</button>
+        <button id="continue-wa" class="btn btn-primary" style="background:#25D366; border:none;">Discuss on WhatsApp</button>
         <a href="shop.html" class="btn btn-outline">Back to Shop</a>
       </div>
     </div>
 
-    <form id="custom-form" style="background: var(--white); padding: 3rem; border-radius: var(--radius); box-shadow: var(--shadow);">
-      <input type="text" name="honeypot" class="honeypot" tabindex="-1" autocomplete="off">
+    <form id="custom-form" style="background: var(--white); padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow);">
       
-      <!-- Contact Info -->
-      <h3 style="margin-bottom: 1.5rem; font-family: 'Nunito', sans-serif; color: var(--rose); border-bottom: 1px solid var(--blush); padding-bottom: 0.5rem;">Your Details</h3>
+      <!-- HIDDEN HONEYPOT (Spam prevention, guaranteed invisible) -->
+      <input type="hidden" name="honeypot" class="honeypot" value="">
+      
+      <h3 style="margin-bottom: 1rem; font-family: 'Nunito', sans-serif; color: var(--rose); border-bottom: 1px solid var(--blush); padding-bottom: 0.5rem;">Your Details</h3>
       <div class="form-grid">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Full Name *</label>
@@ -95,13 +92,12 @@
         </div>
       </div>
 
-      <!-- Project Details -->
-      <h3 style="margin-bottom: 1.5rem; margin-top: 2rem; font-family: 'Nunito', sans-serif; color: var(--rose); border-bottom: 1px solid var(--blush); padding-bottom: 0.5rem;">Project Details</h3>
+      <h3 style="margin-bottom: 1rem; margin-top: 2rem; font-family: 'Nunito', sans-serif; color: var(--rose); border-bottom: 1px solid var(--blush); padding-bottom: 0.5rem;">Project Details</h3>
       <div class="form-grid">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Category</label>
           <select name="orderType">
-            <option value="Crochet">Crochet</option>
+            <option value="Crochet">Crochet Item</option>
             <option value="Gift Hamper">Gift Hamper</option>
             <option value="Womens Accessories">Women's Accessories</option>
             <option value="Kids Wear">Kids Wear</option>
@@ -116,7 +112,7 @@
 
       <div class="form-group">
         <label>Detailed Description *</label>
-        <textarea name="description" rows="5" required placeholder="Tell us about your idea, size requirements, and any special touches..."></textarea>
+        <textarea name="description" rows="4" required placeholder="Tell us about your idea, size requirements, and any special touches..."></textarea>
       </div>
 
       <div class="form-group">
@@ -124,7 +120,7 @@
         <input type="url" name="reference" placeholder="Link to a Pinterest board, Instagram post, or Google Drive image">
       </div>
 
-      <div class="form-grid">
+      <div class="form-grid" style="margin-top: 1rem;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Needed By Date</label>
           <input type="date" name="neededBy">
@@ -147,20 +143,26 @@
   
   <a href="https://wa.me/919876543210" class="floating-wa" target="_blank" aria-label="Chat on WhatsApp">💬</a>
 
-  <footer>
-    <div class="logo" style="justify-content:center; margin-bottom:1rem;">
-      <img src="assets/logo.png" alt="Kraftloom">
-    </div>
-    <p>27th Main Rd, nearby HSR Ceramics, 1st Sector, HSR Layout, Bengaluru 560102</p>
-    <div class="footer-links">
-      <a href="shop.html">Shop</a>
-      <a href="about.html">About</a>
-      <a href="policies.html">Policies</a>
-      <a href="contact.html">Contact</a>
-    </div>
-    <p>&copy; 2026 Kraftloom. All rights reserved.</p>
-  </footer>
-  
+  <!-- App Bottom Nav for Mobile -->
+  <nav class="bottom-nav">
+    <a href="index.html">
+      <span class="icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="shop.html">
+      <span class="icon">🛍️</span>
+      <span>Shop</span>
+    </a>
+    <a href="custom-order.html" class="active">
+      <span class="icon">✨</span>
+      <span>Custom</span>
+    </a>
+    <a href="#" class="open-cart-btn">
+      <span class="icon" style="position:relative;">🛒<span class="cart-badge">0</span></span>
+      <span>Cart</span>
+    </a>
+  </nav>
+
   <script src="app.js" defer></script>
 </body>
 </html>
