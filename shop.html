@@ -5,6 +5,43 @@
   <title>Shop | Kraftloom</title>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Styling for Square Filter Checkboxes & Cart Buttons */
+    .custom-radio {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--brown);
+      border-radius: 4px; /* Makes them square with soft edges */
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+      cursor: pointer;
+      position: relative;
+      background: var(--white);
+    }
+    .custom-radio:checked {
+      background-color: var(--rose);
+      border-color: var(--rose);
+    }
+    .custom-radio:checked::after {
+      content: '✔';
+      color: white;
+      font-size: 12px;
+      position: absolute;
+      top: -2px;
+      left: 2px;
+    }
+    .filter-label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--brown);
+    }
+  </style>
 </head>
 <body>
   
@@ -21,7 +58,10 @@
     <div class="cart-items" id="cart-items-container"></div>
     <div class="cart-footer">
       <h3 id="cart-total" style="margin-bottom:1rem;">Total: ₹0</h3>
-      <button class="btn btn-primary" id="checkout-wa" style="width:100%;">Order via WhatsApp</button>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" id="checkout-wa" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: #25D366; color: white; border: none;">WhatsApp</button>
+        <button class="btn btn-primary" id="checkout-ig" style="flex: 1; padding: 0.75rem 0.5rem; font-size: 0.9rem; background: linear-gradient(45deg, #f09433, #bc1888); color: white; border: none;">Instagram</button>
+      </div>
     </div>
   </div>
 
@@ -33,7 +73,7 @@
     <button class="hamburger">☰</button>
     <nav class="nav-links">
       <a href="index.html">Home</a>
-      <a href="shop.html">Shop All</a>
+      <a href="shop.html" style="color:var(--rose); font-weight:700;">Shop All</a>
       <a href="custom-order.html">Custom Orders</a>
       <a href="about.html">About Us</a>
       <a href="contact.html">Contact</a>
@@ -46,28 +86,31 @@
   </header>
   
   <main class="container">
-    <h1>Shop Collection</h1>
+    <h1 style="margin-bottom: 1rem;">Shop Collection</h1>
     <div class="shop-layout">
-      <!-- Filters Sidebar: Now uses Instant Radio Buttons -->
+      
+      <!-- Filters Sidebar -->
       <aside class="filters" id="filters-sidebar">
         <div id="filter-form">
           <div class="filter-group">
-            <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Search</label>
-            <input type="text" id="filter-q" placeholder="Search products...">
+            <label style="font-weight: 600; display: block; margin-bottom: 0.8rem;">Search</label>
+            <input type="text" id="filter-q" placeholder="Search products..." style="border: 1px solid var(--brown); border-radius: 6px; padding: 0.5rem; width: 100%;">
           </div>
+          
           <div class="filter-group">
-            <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Category</label>
-            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="" checked> All Categories</label>
-            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="Crochet"> Crochet</label>
-            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="Gifts"> Gift Hampers</label>
-            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="Womens Accessories"> Women's Accessories</label>
-            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="category" value="Kids Wear"> Kids Wear</label>
+            <label style="font-weight: 600; display: block; margin-bottom: 0.8rem; margin-top: 1.5rem;">Category</label>
+            <label class="filter-label"><input type="radio" name="category" value="" class="custom-radio" checked> All Categories</label>
+            <label class="filter-label"><input type="radio" name="category" value="Crochet" class="custom-radio"> Crochet</label>
+            <label class="filter-label"><input type="radio" name="category" value="Gifts" class="custom-radio"> Gift Hampers</label>
+            <label class="filter-label"><input type="radio" name="category" value="Womens Accessories" class="custom-radio"> Women's Accessories</label>
+            <label class="filter-label"><input type="radio" name="category" value="Kids Wear" class="custom-radio"> Kids Wear</label>
           </div>
+          
           <div class="filter-group">
-            <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Sort By</label>
-            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="sort" value="newest" checked> Newest First</label>
-            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="sort" value="price-asc"> Price: Low to High</label>
-            <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;"><input type="radio" name="sort" value="price-desc"> Price: High to Low</label>
+            <label style="font-weight: 600; display: block; margin-bottom: 0.8rem; margin-top: 1.5rem;">Sort By</label>
+            <label class="filter-label"><input type="radio" name="sort" value="newest" class="custom-radio" checked> Newest First</label>
+            <label class="filter-label"><input type="radio" name="sort" value="price-asc" class="custom-radio"> Price: Low to High</label>
+            <label class="filter-label"><input type="radio" name="sort" value="price-desc" class="custom-radio"> Price: High to Low</label>
           </div>
         </div>
       </aside>
@@ -75,7 +118,7 @@
       <!-- Product Grid -->
       <section>
         <div class="grid grid-3" id="product-grid">
-           <!-- Skeletons loaded via JS, replaced by data -->
+           <!-- Skeletons loaded via JS, replaced instantly by cache -->
            <div class="skeleton" style="height:350px;"></div>
            <div class="skeleton" style="height:350px;"></div>
            <div class="skeleton" style="height:350px;"></div>
