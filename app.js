@@ -87,7 +87,6 @@ function initFilters() {
   const toggleBtn = document.getElementById('toggle-filters-btn');
   const sidebar = document.getElementById('filters-sidebar');
 
-  // Mobile Filter Dropdown Logic
   if (toggleBtn && sidebar) {
     toggleBtn.addEventListener('click', () => {
       sidebar.classList.toggle('show');
@@ -119,7 +118,6 @@ function initFilters() {
     window.history.replaceState({}, '', `${window.location.pathname}?${newParams.toString()}`);
     renderShop();
     
-    // Auto-close filters on mobile after selecting an option
     if(window.innerWidth <= 768 && sidebar) sidebar.classList.remove('show');
   };
 
@@ -201,19 +199,19 @@ function formatImageUrl(url) {
   return url;
 }
 
-// Strictly Structured Modal (Fixes CTAs falling off screen)
+// Modal HTML with the hide-scroll utility class added
 function injectModal() {
   if (document.getElementById('product-modal')) return;
   const modalHTML = `
     <div id="product-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--overlay); z-index:9999; justify-content:center; align-items:flex-end;">
       
-      <div id="product-modal-content" style="background:var(--bg); width:100%; max-width:600px; height:88vh; border-radius:24px 24px 0 0; display:flex; flex-direction:column; position:relative; overflow:hidden;">
+      <div id="product-modal-content" style="background:var(--bg); width:100%; max-width:600px; height:88dvh; border-radius:24px 24px 0 0; display:flex; flex-direction:column; position:relative; overflow:hidden;">
         
         <button onclick="closeModal()" style="position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.9); border:none; border-radius:50%; width:36px; height:36px; font-size:1.5rem; cursor:pointer; color:var(--brown); box-shadow:var(--shadow); z-index:10; display:flex; align-items:center; justify-content:center;">&times;</button>
         
-        <!-- Scrollable Top Half -->
-        <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
-          <div style="height:45vh; flex-shrink:0; background:var(--white);">
+        <!-- Scrollable content without ugly scrollbar -->
+        <div class="hide-scroll" style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
+          <div style="height:45dvh; flex-shrink:0; background:var(--white);">
             <img id="modal-img" style="width:100%; height:100%; object-fit:cover;">
           </div>
           <div style="padding:1.5rem; background:var(--white); flex:1;">
@@ -224,7 +222,6 @@ function injectModal() {
           </div>
         </div>
         
-        <!-- Locked Bottom Bar for CTAs -->
         <div style="flex-shrink:0; background:var(--white); padding:12px 15px; box-shadow:0 -4px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:10px; padding-bottom:calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #f0e6d8;">
            <button id="modal-btn-cart" class="btn btn-outline" style="width:100%; padding:0.75rem;">Add to Cart</button>
            <div style="display:flex; gap:10px;">
@@ -404,6 +401,7 @@ function sendCart(platform) {
   }
 }
 
+// Custom Order Form with WhatsApp Automation
 function initCustomOrderForm() {
   const form = document.getElementById('custom-form');
   if (!form) return;
@@ -418,6 +416,18 @@ function initCustomOrderForm() {
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
     
+    // Format the deeply detailed WhatsApp payload
+    const waPayloadText = encodeURIComponent(
+      `Hi Kraftloom! 👋\n\nI just submitted a custom order request on the website. Here are my details:\n\n` +
+      `*Name:* ${payload.name}\n` +
+      `*Category:* ${payload.orderType}\n` +
+      `*Colors/Theme:* ${payload.colors || 'Not specified'}\n` +
+      `*Description:* ${payload.description}\n` +
+      `*Needed By:* ${payload.neededBy || 'Flexible timeline'}\n` +
+      `*Budget:* ${payload.budget || 'Not specified'}\n\n` +
+      `Looking forward to discussing this!`
+    );
+
     try {
       await fetch(CONFIG.SHEET_API_URL, { method: 'POST', body: JSON.stringify(payload) });
       const successDiv = document.getElementById('form-success');
@@ -427,8 +437,7 @@ function initCustomOrderForm() {
       const continueBtn = document.getElementById('continue-wa');
       if (continueBtn) {
         continueBtn.onclick = () => {
-          const msg = encodeURIComponent(`Hi Kraftloom! 👋\n\nI just submitted a custom order request on the website under the name *${payload.name}*.\n\nCould we discuss the details?`);
-          window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+          window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${waPayloadText}`, '_blank');
         };
       }
     } catch(err) {
