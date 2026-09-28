@@ -103,8 +103,11 @@ footer { background: var(--white); padding: 3rem 5%; text-align: center; margin-
    BULLETPROOF FLEX DESKTOP MODAL 
    ========================================================================= */
 #product-modal-content { display: flex; flex-direction: row; width: 100%; max-width: 900px; height: 80vh; max-height: 700px; background: var(--white); border-radius: 20px; overflow: hidden; position: relative; }
-.modal-split-img { flex: 1 1 50%; height: 100%; background: #f9f9f9; }
-.modal-split-img img { width: 100%; height: 100%; object-fit: cover; }
+
+/* The fix: position relative on container, absolute on the image itself */
+.modal-split-img { flex: 1 1 50%; height: 100%; background: #f9f9f9; position: relative; }
+.modal-split-img img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+
 .modal-split-content { flex: 1 1 50%; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
 .modal-details-top { flex: 1 1 auto; padding: 3rem; overflow-y: auto; }
 .modal-details-bottom { flex: 0 0 auto; padding: 2rem 3rem; border-top: 1px solid var(--blush); background: var(--white); display: flex; flex-direction: column; gap: 10px; }
@@ -142,28 +145,42 @@ footer { background: var(--white); padding: 3rem 5%; text-align: center; margin-
   .cart-drawer { width: 100%; max-width: 100%; right: -100%; }
   
   /* =========================================================================
-     BULLETPROOF FLEX MOBILE MODAL (Adapts mathematically to ANY screen)
+     BULLETPROOF FLEX MOBILE MODAL (Forces correct rendering on OnePlus/Chrome)
      ========================================================================= */
   #product-modal { padding: 0 !important; align-items: flex-end !important; }
   
   #product-modal-content { 
     flex-direction: column !important; 
-    height: 90% !important; /* Fallback for older browsers */
-    height: 90dvh !important; /* Matches exactly 90% of viewable screen */
-    max-height: 90dvh !important; 
+    height: 85vh !important; /* Fallback */
+    height: 85dvh !important; 
+    max-height: 85dvh !important; 
     border-radius: 24px 24px 0 0 !important; 
     animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+    overflow: hidden !important; /* STRICT constraint */
   }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
   
+  /* The absolute positioning ensures the image CANNOT stretch the container */
   .modal-split-img { 
-    flex: 0 0 40% !important; /* Hard-locks image to exactly 40% of modal height */
-    height: auto !important; 
+    flex: 0 0 45% !important; 
+    height: 45% !important; 
+    min-height: 0 !important;
+    position: relative !important;
+    width: 100% !important;
+  }
+  
+  .modal-split-img img { 
+    position: absolute !important;
+    top: 0; left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
   
   .modal-split-content { 
-    flex: 1 1 auto !important; /* Forces content block to absorb remaining space */
-    height: auto !important; 
+    flex: 1 1 55% !important; 
+    height: 55% !important; 
+    min-height: 0 !important; /* Prevents flex blowout */
   }
   
   .modal-details-top { 
