@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>About Us | Kraftloom</title>
+  <title>Shop | Kraftloom</title>
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
@@ -22,8 +22,8 @@
     <div class="cart-footer">
       <h3 id="cart-total" style="margin-bottom:1rem; font-family:'Playfair Display', serif;">Total: ₹0</h3>
       <div style="display: flex; gap: 10px;">
-        <button class="btn btn-primary" id="checkout-wa" style="flex: 1; font-size: 0.95rem; background: #25D366; border: none;">WhatsApp</button>
-        <button class="btn btn-primary" id="checkout-ig" style="flex: 1; font-size: 0.95rem; background: linear-gradient(45deg, #f09433, #bc1888); border: none;">Instagram</button>
+        <button class="btn btn-primary" id="checkout-wa" style="flex: 1; font-size: 0.95rem; background: #25D366; color: white; border: none;">WhatsApp</button>
+        <button class="btn btn-primary" id="checkout-ig" style="flex: 1; font-size: 0.95rem; background: linear-gradient(45deg, #f09433, #bc1888); color: white; border: none;">Instagram</button>
       </div>
     </div>
   </div>
@@ -33,11 +33,12 @@
       <img src="assets/logo.png" alt="Kraftloom Logo">
       Kraftloom
     </a>
+    <button class="hamburger">☰</button>
     <nav class="nav-links">
       <a href="index.html">Home</a>
-      <a href="shop.html">Shop All</a>
+      <a href="shop.html" style="color:var(--rose); font-weight:700;">Shop All</a>
       <a href="custom-order.html">Custom Orders</a>
-      <a href="about.html" style="color:var(--rose); font-weight:700;">About Us</a>
+      <a href="about.html">About Us</a>
     </nav>
     <div class="nav-actions">
       <button class="open-cart-btn" style="background:none;border:none;cursor:pointer;position:relative;display:flex;align-items:center;">
@@ -46,55 +47,62 @@
       </button>
     </div>
   </header>
-
-  <main class="container" style="max-width: 900px;">
+  
+  <main class="container">
+    <h1 style="margin-bottom: 1rem; text-align: center;">Shop Collection</h1>
     
-    <!-- Brand Story Section -->
-    <div style="text-align:center; padding: 2rem 0;">
-      <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--brown);">Our Story</h1>
-      <p class="accent-text" style="font-size: 2rem;">Small Things, Big Happiness</p>
+    <div class="mobile-filter-toggle">
+      <button id="toggle-filters-btn" class="btn btn-outline" style="width:100%; display:flex; align-items:center; gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        Filter & Sort
+      </button>
     </div>
 
-    <div style="background: var(--white); padding: 3rem; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 3rem;">
-      <p style="margin-bottom: 1.5rem; font-size: 1.1rem;">Welcome to Kraftloom, a handmade-gifts boutique nestled in the heart of HSR Layout, Bengaluru. What started as a passion for crafting beautiful, personalized items has blossomed into a space dedicated to celebrating life's special moments.</p>
-      <p style="margin-bottom: 1.5rem; font-size: 1.1rem;">We believe that the best gifts aren't just bought; they are made. From intricate crochet bouquets to carefully curated gift hampers and custom kids wear, every piece in our collection is crafted by hand, custom-tailored to your vision, and always made with love.</p>
-      <p style="margin-bottom: 2rem; font-size: 1.1rem;">Whether you are looking for a unique birthday hamper, a custom t-shirt for a milestone event, or a delicate handmade accessory, we are here to help you bring your ideas to life. Let's celebrate new beginnings together.</p>
+    <div class="shop-layout">
       
-      <div style="text-align:center;">
-        <a href="shop.html" class="btn btn-primary">Explore the Shop</a>
-      </div>
-    </div>
-
-    <!-- Map Section -->
-    <div style="background: var(--white); padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 3rem;">
-      <h2 style="margin-bottom: 1rem; text-align:center;">Visit Us</h2>
-      <p style="text-align:center; margin-bottom: 2rem;">27th Main Rd, nearby HSR Ceramics, 1st Sector, HSR Layout, Bengaluru, Karnataka 560102</p>
-      <div style="width: 100%; height: 350px; border-radius: var(--radius); overflow: hidden;">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15555.20525287342!2d77.63229615!3d12.91180295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae149a4667d8f9%3A0xc31fa4081efdb58!2sSector%201%2C%20HSR%20Layout%2C%20Bengaluru%2C%20Karnataka%20560102!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-    </div>
-
-    <!-- Reviews Section -->
-    <div style="padding: 2rem 0;">
-      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
-        <div>
-          <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Customer Love</h2>
-          <p style="color: #666;">See what our Kraftloom family has to say.</p>
+      <aside class="filters" id="filters-sidebar">
+        <div id="filter-form">
+          <div class="form-group">
+            <input type="text" id="filter-q" placeholder="Search products...">
+          </div>
+          
+          <div class="form-group">
+            <label style="margin-bottom: 0.8rem; font-family:'Playfair Display', serif; font-size:1.2rem;">Category</label>
+            <label class="filter-label"><input type="radio" name="category" value="" class="custom-radio" checked> All Categories</label>
+            <label class="filter-label"><input type="radio" name="category" value="Crochet" class="custom-radio"> Crochet</label>
+            <label class="filter-label"><input type="radio" name="category" value="Gifts" class="custom-radio"> Gift Hampers</label>
+            <label class="filter-label"><input type="radio" name="category" value="Womens Accessories" class="custom-radio"> Women's Accessories</label>
+            <label class="filter-label"><input type="radio" name="category" value="Kids Wear" class="custom-radio"> Kids Wear</label>
+          </div>
+          
+          <div class="form-group">
+            <label style="margin-bottom: 0.8rem; font-family:'Playfair Display', serif; font-size:1.2rem;">Sort By</label>
+            <label class="filter-label"><input type="radio" name="sort" value="newest" class="custom-radio" checked> Newest First</label>
+            <label class="filter-label"><input type="radio" name="sort" value="price-asc" class="custom-radio"> Price: Low to High</label>
+            <label class="filter-label"><input type="radio" name="sort" value="price-desc" class="custom-radio"> Price: High to Low</label>
+          </div>
         </div>
-        <a href="https://maps.app.goo.gl/T4BS93VJS8xkoiBd7" target="_blank" class="btn btn-outline" style="font-size: 0.9rem;">Leave a Review on Google</a>
-      </div>
+      </aside>
 
-      <div class="grid grid-3" id="reviews-container"></div>
+      <section>
+        <div class="grid grid-3" id="product-grid">
+           <div class="skeleton" style="height:250px;"></div>
+           <div class="skeleton" style="height:250px;"></div>
+        </div>
+      </section>
     </div>
-
   </main>
+  
+  <a href="https://wa.me/919876543210" class="floating-wa" target="_blank" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+  </a>
 
   <nav class="bottom-nav">
     <a href="index.html">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>Home</span>
     </a>
-    <a href="shop.html">
+    <a href="shop.html" class="active">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
       <span>Shop</span>
     </a>
@@ -111,58 +119,6 @@
     </a>
   </nav>
 
-  <footer>
-    <div class="logo" style="justify-content:center; margin-bottom:1rem;">
-      <img src="assets/logo.png" alt="Kraftloom">
-    </div>
-    <p>HSR Layout, Bengaluru 560102</p>
-    <p>&copy; 2026 Kraftloom. All rights reserved.</p>
-  </footer>
-
   <script src="app.js" defer></script>
-  
-  <!-- Sheet Reviews Script -->
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const container = document.getElementById("reviews-container");
-      container.innerHTML = '<div class="skeleton" style="height: 150px; width: 100%;"></div>'.repeat(3); 
-
-      try {
-        const res = await fetch(CONFIG.SHEET_API_URL + "?action=reviews");
-        const reviews = await res.json();
-
-        if (!Array.isArray(reviews) || reviews.length === 0) {
-          container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Check back later to see what our customers are saying!</p>';
-          return;
-        }
-
-        const topReviews = reviews.filter(r => Number(r.Rating) >= 4);
-
-        if (topReviews.length === 0) {
-           container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">No reviews found.</p>';
-           return;
-        }
-
-        container.innerHTML = topReviews.map(r => {
-          const ratingNum = Number(r.Rating) || 5;
-          const stars = '★'.repeat(ratingNum) + '☆'.repeat(5 - ratingNum);
-          const reviewerName = r.Reviewer ? r.Reviewer.trim() : 'Happy Customer';
-          
-          return `
-            <div class="review-card">
-              <div class="stars">${stars}</div>
-              <p style="font-style: italic; color: var(--brown); margin: 0.5rem 0; font-size: 0.95rem;">"${r.Review}"</p>
-              <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--blush); text-align: right;">
-                <span style="font-weight: 700; font-family: 'Playfair Display', serif;">- ${reviewerName}</span>
-              </div>
-            </div>
-          `;
-        }).join('');
-      } catch (err) {
-        console.error("Failed to fetch reviews", err);
-        container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Check back later to see what our customers are saying!</p>';
-      }
-    });
-  </script>
 </body>
 </html>
